@@ -54,6 +54,9 @@ body {
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     counter-reset: section-counter; /* Initialize section counter */
+    /* Added refinement: Global baseline for text wrapping */
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* Older browser fallback */
 }
 
 /* --- Layout Containers --- */
@@ -84,6 +87,8 @@ h1, h2, h3, h4 {
     line-height: 1.3;
     margin-bottom: 0.75em;
     color: var(--primary-color);
+    /* Prevent heading overflow if they are extremely long and have no spaces */
+    /* overflow-wrap: break-word; */ /* Generally less needed for headings */
 }
 
 h1 { font-size: 2.5rem; }
@@ -272,6 +277,7 @@ header.scrolled nav a {
     font-size: 1.05rem;
     color: var(--dark-text); /* Using updated dark text */
     line-height: 1.8;
+    /* Inherits overflow-wrap from body, should be sufficient */
 }
 
 /* Skill Highlighting */
@@ -407,6 +413,9 @@ section h2::after {
     font-weight: 600;
     position: relative;
     z-index: 1;
+    /* Added refinement: Ensure long titles without spaces wrap */
+    overflow-wrap: break-word;
+    word-wrap: break-word; /* Fallback */
 }
 .project-details h4 a {
     color: inherit;
@@ -446,6 +455,7 @@ section h2::after {
     line-height: 1.7;
     position: relative;
     z-index: 1;
+    /* Inherits overflow-wrap from body */
 }
 
 /* --- Skill Tags --- */
@@ -468,7 +478,7 @@ section h2::after {
     font-size: 0.8rem;
     font-weight: 500;
     line-height: 1.4;
-    white-space: nowrap;
+    white-space: nowrap; /* Keep nowrap as intended for tags */
     transition: background-color var(--transition-speed-fast), color var(--transition-speed-fast);
 }
 
@@ -668,6 +678,7 @@ section h2::after {
     margin-left: auto;
     margin-right: auto;
     line-height: 1.8;
+    /* Inherits overflow-wrap from body */
 }
 
 #contact ul {
@@ -687,6 +698,11 @@ section h2::after {
 #contact a {
     color: var(--white-color);
     font-weight: 500;
+    /* Added refinement: Modern wrapping property */
+    overflow-wrap: break-word;
+    /* Older fallback */
+    word-wrap: break-word;
+    /* Keep this too: Best for URLs/Emails */
     word-break: break-all;
     padding: 5px 10px;
     border-radius: 4px;
@@ -798,13 +814,16 @@ footer {
 @media (max-width: 767.98px) {
     html {
         font-size: 14px;
-        scroll-padding-top: 80px; /* Revert to fixed padding for simple header */
+        /* Revert to fixed padding for simple header below this breakpoint */
+        /* scroll-padding-top: 80px; */
     }
 
     header {
        height: auto;
        padding: 15px 0;
        position: static; /* Change from sticky */
+       /* Reset transition that's no longer needed */
+       transition: box-shadow var(--transition-speed) ease;
     }
     header.scrolled {
         height: auto;
@@ -821,6 +840,7 @@ footer {
     header h1 {
         margin-bottom: 15px;
         font-size: 1.7rem;
+         transition: none; /* Disable font size transition */
     }
     header nav ul {
         justify-content: center;
@@ -832,6 +852,7 @@ footer {
     }
     header nav a {
         font-size: 1rem;
+        transition: color var(--transition-speed-fast) ease; /* Reset transition */
     }
     /* Remove scroll padding adjustments when header isn't sticky */
     html {
@@ -1013,6 +1034,9 @@ footer {
      .project-blackjack::after {
           font-size: 2.5rem; /* Make them smaller too */
      }
+     .project-item.project-js-game::after { /* Reset JS game icon size for showcase rule below */
+        font-size: inherit;
+     }
 
 
     /* Responsive showcase adjustments */
@@ -1032,7 +1056,7 @@ footer {
         padding: 20px 15px 20px 20px;
         border-left-width: 3px;
      }
-     /* Even smaller icon on small screens */
+     /* Even smaller icon on small screens for showcase item */
       .final-project-showcase .project-item.project-js-game::after {
         font-size: 3.2rem;
         right: 10px;
