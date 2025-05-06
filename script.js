@@ -1,14 +1,14 @@
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Portfolio script loaded and DOM fully parsed.");
 
+    // --- Cache DOM Elements ---
     const header = document.querySelector('header');
-    const headerOffset = header ? header.offsetHeight : 70; // Get header height or use default
     const sections = document.querySelectorAll('main section[id]');
     const navLinks = document.querySelectorAll('header nav a');
     const scrollTopBtn = document.getElementById('scrollTopBtn');
+    const projectItems = document.querySelectorAll('.project-item'); // Cache projects early
 
-    // --- Debounce Function (Helper for scroll events) ---
-    // Limits the rate at which a function can fire.
+    // --- Debounce Function (Helper for scroll/resize events) ---
     function debounce(func, wait = 15, immediate = false) {
         let timeout;
         return function() {
@@ -28,24 +28,30 @@ document.addEventListener('DOMContentLoaded', () => {
     const highlightNavLink = () => {
         let currentSectionId = '';
         const scrollPosition = window.scrollY;
-        // Recalculate offset considering potential header height change and adding buffer
+        // Dynamically get header height + buffer INSIDE the function for accuracy
         const adjustedHeaderOffset = (header ? header.offsetHeight : 70) + 30;
 
         sections.forEach(section => {
-            const sectionTop = section.offsetTop - adjustedHeaderOffset;
-            const sectionBottom = sectionTop + section.offsetHeight;
+            // Check if the section is actually visible before calculating offsets
+            // This helps if sections start invisible due to animations
+            if (section.classList.contains('section-is-visible') || getComputedStyle(section).opacity !== '0') {
+                const sectionTop = section.offsetTop - adjustedHeaderOffset;
+                const sectionBottom = sectionTop + section.offsetHeight;
 
-            // Check if scroll position is within the section's bounds
-            if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
-                currentSectionId = section.getAttribute('id');
+                // Check if scroll position is within the section's bounds
+                if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
+                    currentSectionId = section.getAttribute('id');
+                }
             }
         });
 
          // If no section is actively matched (e.g., in space between sections, or near top/bottom),
-         // try a simpler check: find the last section whose top is above the current scroll position.
-         if (!currentSectionId && sections.length > 0) { // Add check for sections.length
+         // try a simpler check: find the last visible section whose top is above the current scroll position.
+         if (!currentSectionId && sections.length > 0) {
             for (let i = sections.length - 1; i >= 0; i--) {
-                if (scrollPosition >= sections[i].offsetTop - adjustedHeaderOffset) {
+                // Check visibility again here
+                 if ((sections[i].classList.contains('section-is-visible') || getComputedStyle(sections[i]).opacity !== '0') &&
+                     scrollPosition >= sections[i].offsetTop - adjustedHeaderOffset) {
                     currentSectionId = sections[i].getAttribute('id');
                     break;
                 }
@@ -53,20 +59,17 @@ document.addEventListener('DOMContentLoaded', () => {
          }
 
         // Handle edge case: Scrolled near the very bottom of the page
-         if ((window.innerHeight + scrollPosition) >= document.body.offsetHeight - 50 && sections.length > 0) { // 50px buffer, check sections exist
+         if ((window.innerHeight + scrollPosition) >= document.body.offsetHeight - 50 && sections.length > 0) {
             currentSectionId = sections[sections.length - 1].getAttribute('id');
         }
         // Handle edge case: Scrolled near the very top
         else if (sections.length > 0 && scrollPosition < sections[0].offsetTop - adjustedHeaderOffset) {
-             // Default to the first section if above it, or clear if preferred
-             currentSectionId = sections[0].getAttribute('id'); // Or set to '' to have none active at top
+             currentSectionId = sections[0].getAttribute('id'); // Default to first section
         }
-
 
         // Update active class on nav links
         navLinks.forEach(link => {
             link.classList.remove('active');
-            // Check if the link's href matches the current section ID
             if (link.getAttribute('href') === `#${currentSectionId}`) {
                 link.classList.add('active');
             }
@@ -77,13 +80,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleHeaderScroll = () => {
         if (!header) return; // Exit if header doesn't exist
 
-        // Disable shrinking on smaller screens where layout changes
+        // Disable shrinking on smaller screens where layout changes (header becomes static)
         if (window.matchMedia("(max-width: 767.98px)").matches) {
              header.classList.remove('scrolled'); // Ensure class is removed if screen resized
              return;
         }
 
-        if (window.scrollY > 50) { // Add 'scrolled' class after scrolling 50px
+        // Add 'scrolled' class after scrolling 50px
+        if (window.scrollY > 50) {
             header.classList.add('scrolled');
         } else {
             header.classList.remove('scrolled');
@@ -93,7 +97,8 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Feature 3: Scroll-to-Top Button Visibility ---
     const handleScrollTopBtn = () => {
         if (!scrollTopBtn) return; // Exit if button doesn't exist
-        if (window.scrollY > 300) { // Show button after scrolling 300px
+        // Show button after scrolling 300px
+        if (window.scrollY > 300) {
             scrollTopBtn.classList.add('visible');
         } else {
             scrollTopBtn.classList.remove('visible');
@@ -107,67 +112,129 @@ document.addEventListener('DOMContentLoaded', () => {
         handleScrollTopBtn();
     }, 15); // Run checks no more than roughly every 15ms
 
-    // Add combined scroll event listener
+    // --- Add Event Listeners ---
     window.addEventListener('scroll', onScroll);
-
-    // Listen for resize to potentially re-apply/remove header scroll effect
-    window.addEventListener('resize', debounce(handleHeaderScroll, 50));
+    window.addEventListener('resize', debounce(() => {
+        handleHeaderScroll();
+        // Optionally re-check nav highlighting on resize if layout changes drastically
+        // highlightNavLink();
+    }, 50));
 
     // Initial calls on page load
-    highlightNavLink();
-    handleHeaderScroll();
-    handleScrollTopBtn();
+    handleHeaderScroll(); // Set initial header state
+    handleScrollTopBtn(); // Set initial button state
+    // highlightNavLink(); // Call highlight initially, but section visibility might affect it
+    // Note: The section observer below will handle initial section visibility
 
 
     // --- Feature 4: Staggered Fade-in Animation for Project Items ---
-    // Updated selector from .project-card to .project-item
-    const projectItems = document.querySelectorAll('.project-item');
-
     if ('IntersectionObserver' in window && projectItems.length > 0) {
-        const observerOptions = {
+        const projectObserverOptions = {
             root: null,
             rootMargin: '0px 0px -80px 0px', // Trigger when item is about 80px from bottom edge
             threshold: 0.1 // Need at least 10% visible
         };
 
-        // Keep track of the index globally for staggering across different observer triggers
-        let itemIndex = 0;
-        const processedItems = new WeakSet(); // Keep track of items already processed
+        let itemIndex = 0; // Keep track of index for staggering
+        const processedItems = new WeakSet(); // Track processed items
 
-        const observerCallback = (entries, observer) => {
+        const projectObserverCallback = (entries, observer) => {
             entries.forEach((entry) => {
-                // Check if item hasn't been processed already to handle potential multiple intersections
+                // Check if item hasn't been processed and is intersecting
                 if (entry.isIntersecting && !processedItems.has(entry.target)) {
                     // Calculate delay based on the overall index
-                    const delay = itemIndex * 100; // 100ms delay between items
-                    entry.target.style.setProperty('--card-delay', `${delay}ms`); // Keep CSS var name for simplicity or change if needed
+                    // Base delay is already set in CSS (0.3s), this adds staggering on top
+                    const staggerDelay = itemIndex * 100; // 100ms delay between items
+                    entry.target.style.setProperty('--card-delay', `${0.3 + staggerDelay / 1000}s`); // Add stagger to base delay
+
                     entry.target.classList.add('is-visible');
 
                     processedItems.add(entry.target); // Mark item as processed
                     itemIndex++; // Increment index for the next item
 
-                    observer.unobserve(entry.target); // Stop observing once animated
+                    // Don't unobserve here if we want hover effects etc. to remain
+                    // observer.unobserve(entry.target); // Optional: Stop observing once animated
                 }
                 // No 'else' needed if we only want the animation once on scroll-in
             });
         };
 
-        const itemObserver = new IntersectionObserver(observerCallback, observerOptions);
+        const projectObserver = new IntersectionObserver(projectObserverCallback, projectObserverOptions);
 
-        // Observe each item individually to trigger based on its own visibility
         projectItems.forEach(item => {
-            itemObserver.observe(item);
+            projectObserver.observe(item);
         });
 
     } else {
         // Fallback for older browsers or if no items exist
-        // Updated console message
-        console.warn("Intersection Observer not supported or no project items found. Showing all items immediately.");
+        console.warn("Intersection Observer not supported for project items or no items found. Showing all items immediately.");
         projectItems.forEach(item => {
-            item.style.setProperty('--card-delay', '0ms'); // Ensure delay is 0
+            item.style.setProperty('--card-delay', '0.3s'); // Apply base delay
             item.classList.add('is-visible');
         });
     }
+
+
+    // --- Feature 6: Section Entrance Animation ---
+    if ('IntersectionObserver' in window && sections.length > 0) {
+        const sectionObserverOptions = {
+            root: null,
+            // Trigger when the section is about 20-25% from the bottom edge. Adjust as needed.
+            rootMargin: '0px 0px -25% 0px',
+            threshold: 0 // Trigger as soon as it crosses the margin boundary
+        };
+
+        const sectionObserverCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    // Section is entering the detection zone
+                    entry.target.classList.add('section-is-visible');
+                    // Re-run nav highlight when a section becomes visible
+                    // Use debounce to avoid running too often if multiple sections trigger quickly
+                    debounce(highlightNavLink, 50)();
+                    // Optional: Unobserve if you only want the animation once per page load
+                    // observer.unobserve(entry.target);
+                } else {
+                    // Section is leaving the detection zone
+                    // Optional: Remove class to reset animation if user scrolls back up
+                    // Be careful: this might feel janky if sections are close together
+                    // entry.target.classList.remove('section-is-visible');
+                }
+            });
+        };
+
+        const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
+
+        sections.forEach(section => {
+            sectionObserver.observe(section);
+        });
+
+        // Initial check for sections already in view on load (e.g., #about)
+        // This is important because the scroll event won't fire initially
+        sections.forEach(section => {
+            const rect = section.getBoundingClientRect();
+            const viewportHeight = window.innerHeight;
+            // Check if section top is within the trigger zone from the bottom
+            if (rect.top < viewportHeight * (1 - 0.25)) { // Match the rootMargin percentage (1 - 0.25 = 0.75)
+                 // Check if section bottom is below the top of the viewport (i.e., some part is visible)
+                if (rect.bottom > 0) {
+                     section.classList.add('section-is-visible');
+                }
+            }
+        });
+         // Call highlightNavLink AFTER the initial section visibility check
+         highlightNavLink();
+
+    } else {
+        // Fallback for older browsers or if no sections found
+        console.warn("Intersection Observer not supported for sections or no sections found. Showing all sections immediately.");
+        sections.forEach(section => {
+            section.classList.add('section-is-visible'); // Make them visible directly
+        });
+        highlightNavLink(); // Highlight nav based on initially visible sections
+    }
+    // --- End of Section Entrance Animation ---
+
 
     // --- Feature 5: Scroll-to-Top Button Click Handler ---
     if (scrollTopBtn) {

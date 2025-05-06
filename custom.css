@@ -43,14 +43,16 @@
 html {
     scroll-behavior: smooth;
     font-size: 16px; /* Maintain base */
-    scroll-padding-top: calc(var(--header-height-scrolled) + 20px);
+    /* Adjust scroll padding to account for header and transition timing */
+    scroll-padding-top: calc(var(--header-height-scrolled) + 30px);
 }
 
 body {
     font-family: var(--font-primary);
     line-height: 1.7;
     color: var(--dark-text);
-    background-color: var(--light-bg);
+    background: linear-gradient(to bottom, hsl(210, 20%, 98%) 0%, hsl(210, 15%, 95%) 100%);
+    background-attachment: fixed;
     -webkit-font-smoothing: antialiased;
     -moz-osx-font-smoothing: grayscale;
     counter-reset: section-counter; /* Initialize section counter */
@@ -68,6 +70,7 @@ body {
 
 main {
     padding-top: 40px;
+    overflow-x: hidden; /* Prevent horizontal scrollbars caused by transforms */
 }
 
 /* --- Links --- */
@@ -87,8 +90,6 @@ h1, h2, h3, h4 {
     line-height: 1.3;
     margin-bottom: 0.75em;
     color: var(--primary-color);
-    /* Prevent heading overflow if they are extremely long and have no spaces */
-    /* overflow-wrap: break-word; */ /* Generally less needed for headings */
 }
 
 h1 { font-size: 2.5rem; }
@@ -214,12 +215,9 @@ header.scrolled nav a {
 /*        Hero / About Section        */
 /* ================================== */
 #about {
-    background: transparent;
-    padding: 60px 0 80px 0;
+    /* Removed transition properties from here, handled globally now */
+    /* Removed background, padding, margin, border-radius, box-shadow - use general section styles */
     text-align: center;
-    margin-bottom: 60px;
-    border-radius: 0;
-    box-shadow: none;
 }
 
 .about-content {
@@ -228,7 +226,7 @@ header.scrolled nav a {
     padding: 0 20px;
 }
 
-#about h2 {
+#about h2 { /* Target h2 specifically if needed, but general h2 styling applies */
     margin-bottom: 40px;
     font-size: 2.2rem;
 }
@@ -277,7 +275,6 @@ header.scrolled nav a {
     font-size: 1.05rem;
     color: var(--dark-text); /* Using updated dark text */
     line-height: 1.8;
-    /* Inherits overflow-wrap from body, should be sufficient */
 }
 
 /* Skill Highlighting */
@@ -297,12 +294,33 @@ header.scrolled nav a {
 /*     Sections General Styling       */
 /* ================================== */
 section {
-    padding: 80px 0;
-    margin-bottom: 50px;
+    /* Increased padding and margin */
+    padding: 100px 0;
+    margin-bottom: 80px;
+    position: relative; /* Needed for stacking context if transitions overlap */
+    z-index: 1; /* Ensure sections stack okay */
 }
 
 section h2::after {
-    display: none;
+    display: none; /* Ensure no default underlines conflict */
+}
+
+
+/* ================================== */
+/*     Section Transition Effects     */
+/* ================================== */
+
+main section[id] {
+    opacity: 0; /* Start hidden */
+    transform: translateY(150px); /* Start significantly lower */
+    transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1), /* Ease-out quad for opacity */
+                transform 1s cubic-bezier(0.23, 1, 0.32, 1); /* Ease-out quint for transform */
+    will-change: opacity, transform; /* Hint to browser for performance */
+}
+
+main section[id].section-is-visible {
+    opacity: 1; /* Fade in */
+    transform: translateY(0); /* Slide up to original position */
 }
 
 
@@ -310,12 +328,10 @@ section h2::after {
 /*         Project Section            */
 /* ================================== */
 #projects {
-    background-color: transparent;
-    padding-top: 80px;
-    padding-bottom: 60px;
-    border-radius: 0;
-    box-shadow: none;
-    margin-bottom: 60px;
+    /* Removed specific background, padding, etc. - uses general section styles */
+    /* Keep padding adjustments if necessary for content */
+     padding-top: 80px;
+     padding-bottom: 60px;
 }
 
 .project-category {
@@ -361,22 +377,21 @@ section h2::after {
     border-radius: var(--border-radius);
     background-color: transparent;
     border: 1px solid transparent;
-    transition: background-color var(--transition-speed-fast) ease,
-                border-color var(--transition-speed-fast) ease,
-                transform var(--transition-speed-fast) ease;
-    opacity: 0;
-    transform: translateY(20px);
+    opacity: 0; /* Start hidden for JS animation */
+    transform: translateY(20px); /* Start slightly lower */
     /* Combined transition for visibility and delay */
     transition: background-color var(--transition-speed-fast) ease,
                 border-color var(--transition-speed-fast) ease,
-                transform var(--transition-speed-fast) ease,
-                opacity 0.5s ease-out,
-                transform 0.5s ease-out,
-                transition-delay var(--card-delay, 0s);
+                transform var(--transition-speed-fast) ease, /* Hover transform */
+                opacity 0.5s ease-out 0.3s, /* Fade-in opacity, DELAYED */
+                transform 0.5s ease-out 0.3s, /* Slide-up transform, DELAYED */
+                transition-delay var(--card-delay, 0.3s); /* Staggering delay, applies AFTER base 0.3s delay */
+    will-change: opacity, transform; /* Performance hint */
     overflow: hidden;
     position: relative;
 }
 
+/* Class added by JS for fade-in */
 .project-item.is-visible {
     opacity: 1;
     transform: translateY(0);
@@ -385,7 +400,8 @@ section h2::after {
 
 .project-item:hover {
     background-color: var(--highlight-bg); /* Use updated highlight */
-    /* border-color: var(--border-color); */ /* Optional border */
+    /* Optional: Slightly lift on hover - separate transition property */
+    /* transform: translateY(-3px); */
 }
 
 /* Timeline/Date column */
@@ -413,7 +429,6 @@ section h2::after {
     font-weight: 600;
     position: relative;
     z-index: 1;
-    /* Added refinement: Ensure long titles without spaces wrap */
     overflow-wrap: break-word;
     word-wrap: break-word; /* Fallback */
 }
@@ -455,7 +470,6 @@ section h2::after {
     line-height: 1.7;
     position: relative;
     z-index: 1;
-    /* Inherits overflow-wrap from body */
 }
 
 /* --- Skill Tags --- */
@@ -485,7 +499,6 @@ section h2::after {
 .project-item:hover .tag {
     /* Slightly stronger hover background */
     background-color: rgba(41, 128, 185, 0.3);
-    /* color: var(--primary-color); */ /* Optional: Darker text on hover */
 }
 
 /* ================================== */
@@ -507,6 +520,7 @@ section h2::after {
     pointer-events: none;
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
     transform: scale(0.9) rotate(-5deg);
+    will-change: opacity, transform;
 }
 
 /* Hover effect */
@@ -532,28 +546,6 @@ section h2::after {
 .project-chrome-extension::after { content: '🧩'; }
 .project-login-system::after { content: '🔑'; transform: scale(0.9) rotate(10deg); }
 .project-item.project-login-system:hover::after { transform: scale(1.1) rotate(-5deg); }
-/* Specific JS Game Icon Style (now handled by showcase rule) */
-/* .project-js-game::after { content: '⚔️'; font-size: 4rem; } */
-/* .project-item.project-js-game:hover::after { transform: scale(1.1) rotate(5deg) translateX(-5px); } */
-
-
-/* --- REMOVE OLD CARD STYLES --- */
-.project-grid { display: none; }
-.project-card {
-    border: none !important;
-    box-shadow: none !important;
-    transform: none !important;
-    opacity: 1 !important;
-    padding: 0 !important;
-    display: none !important;
-}
-.project-card::before,
-.project-card::after {
-    content: none !important;
-    display: none !important;
-}
-.demo-link { display: none !important; }
-/* --- End of Project Section Cleanup --- */
 
 
 /* ================================== */
@@ -608,11 +600,12 @@ section h2::after {
     /* Inherit visibility transitions, add showcase-specific ones */
     transition: background-color var(--transition-speed) ease,
                 border-color var(--transition-speed) ease,
+                border-left-color var(--transition-speed) ease, /* Added transition */
                 box-shadow var(--transition-speed) ease,
                 transform var(--transition-speed) ease,
-                opacity 0.5s ease-out, /* Keep visibility transition */
-                transform 0.5s ease-out, /* Keep visibility transition */
-                transition-delay var(--card-delay, 0s); /* Keep delay */
+                opacity 0.5s ease-out 0.3s, /* Keep visibility transition (delayed) */
+                transform 0.5s ease-out 0.3s, /* Keep visibility transition (delayed) */
+                transition-delay var(--card-delay, 0.3s); /* Keep delay */
 }
 
 /* Ensure visibility class still applies */
@@ -641,6 +634,7 @@ section h2::after {
     color: var(--secondary-color); /* Ensure color is set */
     /* Override general transitions for the icon */
     transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), color 0.3s ease;
+    will-change: opacity, transform, color;
 }
 
 .final-project-showcase .project-item.project-js-game:hover::after {
@@ -650,16 +644,35 @@ section h2::after {
 }
 
 
+/* --- Cleanup Old/Unused Project Styles --- */
+.project-grid { display: none; }
+.project-card {
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    display: none !important;
+}
+.project-card::before,
+.project-card::after {
+    content: none !important;
+    display: none !important;
+}
+.demo-link { display: none !important; }
+/* --- End of Project Section Cleanup --- */
+
+
 /* ================================== */
 /*         Contact Section            */
 /* ================================== */
 #contact {
     background: var(--primary-color); /* Use updated primary */
     color: var(--light-bg); /* Use updated light bg */
-    padding: 80px 20px;
+    /* padding handled by general section rule */
     text-align: center;
     border-radius: var(--border-radius);
-    margin-bottom: 60px;
+    /* margin-bottom handled by general section rule */
 }
 
 #contact h2 {
@@ -678,7 +691,6 @@ section h2::after {
     margin-left: auto;
     margin-right: auto;
     line-height: 1.8;
-    /* Inherits overflow-wrap from body */
 }
 
 #contact ul {
@@ -698,15 +710,12 @@ section h2::after {
 #contact a {
     color: var(--white-color);
     font-weight: 500;
-    /* Added refinement: Modern wrapping property */
     overflow-wrap: break-word;
-    /* Older fallback */
     word-wrap: break-word;
-    /* Keep this too: Best for URLs/Emails */
     word-break: break-all;
     padding: 5px 10px;
     border-radius: 4px;
-    transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease;
+    transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease, border-color var(--transition-speed-fast) ease;
     display: inline-flex;
     align-items: center;
     gap: 8px;
@@ -733,7 +742,7 @@ section h2::after {
 footer {
     text-align: center;
     padding: 35px 20px;
-    margin-top: 0;
+    margin-top: 0; /* Footer immediately follows last section margin */
     color: var(--subtle-text); /* Use updated subtle text */
     background-color: var(--light-bg); /* Match body background */
     font-size: 0.9rem;
@@ -766,6 +775,7 @@ footer {
     z-index: 999;
     /* Slightly stronger shadow */
     box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
+    will-change: opacity, transform;
 }
 
 .scroll-top-btn.visible {
@@ -788,11 +798,15 @@ footer {
 @media (max-width: 991.98px) {
     html {
         font-size: 15px;
-        scroll-padding-top: calc(var(--header-height-scrolled) + 15px);
+        scroll-padding-top: calc(var(--header-height-scrolled) + 20px);
     }
     .container {
         max-width: 920px;
         padding: 0 20px;
+    }
+    section {
+        padding: 80px 0; /* Slightly reduce section padding */
+        margin-bottom: 60px; /* Slightly reduce margin */
     }
     .about-layout {
         gap: 40px;
@@ -807,6 +821,10 @@ footer {
     .project-timeline {
         flex-basis: 90px;
     }
+    /* Section transitions might feel too large, reduce translate */
+    main section[id] {
+         transform: translateY(120px);
+    }
 }
 
 
@@ -814,23 +832,21 @@ footer {
 @media (max-width: 767.98px) {
     html {
         font-size: 14px;
-        /* Revert to fixed padding for simple header below this breakpoint */
-        /* scroll-padding-top: 80px; */
     }
 
     header {
        height: auto;
        padding: 15px 0;
        position: static; /* Change from sticky */
-       /* Reset transition that's no longer needed */
-       transition: box-shadow var(--transition-speed) ease;
+       transition: box-shadow var(--transition-speed) ease; /* Only shadow transition */
+       box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07); /* Static shadow */
     }
-    header.scrolled {
+    header.scrolled { /* Remove scrolled styles that are no longer needed */
         height: auto;
-        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07); /* Match non-scrolled shadow */
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
     }
     header.scrolled h1, header.scrolled nav a {
-        font-size: inherit; /* Reset font size changes */
+        font-size: inherit;
     }
 
     header .container {
@@ -840,7 +856,7 @@ footer {
     header h1 {
         margin-bottom: 15px;
         font-size: 1.7rem;
-         transition: none; /* Disable font size transition */
+         transition: none;
     }
     header nav ul {
         justify-content: center;
@@ -852,7 +868,7 @@ footer {
     }
     header nav a {
         font-size: 1rem;
-        transition: color var(--transition-speed-fast) ease; /* Reset transition */
+        transition: color var(--transition-speed-fast) ease;
     }
     /* Remove scroll padding adjustments when header isn't sticky */
     html {
@@ -864,11 +880,12 @@ footer {
     h3 { font-size: 1.4rem; }
 
     section {
-        padding: 60px 0;
+        padding: 60px 0; /* Further reduce padding */
+        margin-bottom: 50px; /* Further reduce margin */
     }
 
     #about {
-        padding: 50px 0 60px 0;
+        /* padding handled by general section */
     }
     .about-layout {
         flex-direction: column;
@@ -935,9 +952,8 @@ footer {
         bottom: 15px;
      }
 
-
     #contact {
-        padding: 60px 15px;
+       /* padding handled by general section */
     }
      #contact ul {
          gap: 20px;
@@ -951,6 +967,12 @@ footer {
         bottom: 20px;
         right: 20px;
     }
+
+    /* Reduce section transition intensity */
+     main section[id] {
+         transform: translateY(100px);
+         transition-duration: 0.7s, 0.9s; /* Slightly faster */
+     }
 }
 
 /* Extra small devices (portrait phones, less than 576px) */
@@ -974,11 +996,12 @@ footer {
     }
 
     section {
-        padding: 50px 0;
+        padding: 50px 0; /* Further reduce padding */
+        margin-bottom: 40px; /* Further reduce margin */
     }
 
     #about {
-        padding: 40px 0 50px 0;
+         /* padding handled by general section */
     }
      .profile-pic {
          width: 150px;
@@ -1070,7 +1093,7 @@ footer {
 
 
     #contact {
-        padding: 50px 10px;
+        /* padding handled by general section */
     }
     #contact p, #contact li {
         font-size: 1rem;
@@ -1096,4 +1119,10 @@ footer {
         bottom: 15px;
         right: 15px;
     }
+
+     /* Further reduce section transition intensity */
+     main section[id] {
+         transform: translateY(80px);
+         transition-duration: 0.6s, 0.8s; /* Even faster */
+     }
 }
