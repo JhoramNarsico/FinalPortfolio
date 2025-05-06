@@ -1,253 +1,1075 @@
 /* ================================== */
-/*          Custom Styles             */
-/*     (Overrides Bootstrap Vars      */
-/*      & Adds Custom Rules)          */
+/*            Modern Overhaul         */
 /* ================================== */
 
-/* --- Font --- */
-body {
-    font-family: 'Poppins', sans-serif;
-    /* Optional: Slightly increase default font size if needed */
-    /* font-size: 1.05rem; */
-}
+/* --- Google Font Import --- */
+@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap');
 
-/* --- Color Variables (Optional: Define custom ones or use Bootstrap's) --- */
+/* --- CSS Variables (Customize Here) --- */
 :root {
-    /* Example: Override Bootstrap primary color */
-    /* --bs-primary: #2c3e50;
-    --bs-primary-rgb: 44, 62, 80; */
+    /* --- Color Adjustments for More Saturation/Contrast --- */
+    --primary-color: #1f3a5a;   /* Darker, richer navy blue */
+    --secondary-color: #2980b9; /* Slightly more intense blue */
+    --accent-color: #d9534f;   /* Stronger, slightly desaturated red */
+    --light-bg: #f8f9fa;       /* Slightly brighter light background */
+    --white-color: #ffffff;
+    --dark-text: #212529;       /* Slightly darker text for better contrast */
+    --light-text: #e0e6eb;      /* Brighter light text for dark backgrounds */
+    --border-color: #dee2e6;   /* Standard light border color */
+    /* Increased alpha for highlights */
+    --highlight-bg: rgba(41, 128, 185, 0.15); /* Using new secondary blue, more opaque */
+    --subtle-text: #6c757d;     /* Standard subtle grey text */
 
-    /* Custom Colors (Can be used alongside Bootstrap classes) */
-    --custom-dark-blue: #2c3e50;
-    --custom-bright-blue: #3498db;
-    --custom-soft-red: #e74c3c;
-    --custom-light-bg: #f7f9fc; /* Similar to Bootstrap's 'light' */
-    --custom-dark-text: #34495e;
-    --custom-subtle-text: #7f8c8d;
-    --custom-highlight-bg: rgba(52, 152, 219, 0.1);
+    --header-height: 70px;
+    --header-height-scrolled: 60px; /* Explicit scrolled height */
+
+    --font-primary: 'Poppins', sans-serif;
+
+    --border-radius: 6px; /* Slightly smaller radius */
+    /* Slightly stronger shadows for definition */
+    --card-shadow: 0 4px 12px rgba(0, 0, 0, 0.07);
+    --card-hover-shadow: 0 6px 20px rgba(0, 0, 0, 0.1);
+    --transition-speed: 0.3s;
+    --transition-speed-fast: 0.2s;
 }
 
 /* --- Base Styles --- */
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
 html {
     scroll-behavior: smooth;
+    font-size: 16px; /* Maintain base */
+    scroll-padding-top: calc(var(--header-height-scrolled) + 20px);
 }
 
-/* Adjust scroll padding top based on sticky navbar height */
-/* Body's data-bs-offset might handle this, but this is a fallback */
-/* body {
-    padding-top: 70px; /* Adjust if navbar height changes */
-/* } */
-
-/* --- Navbar Customization --- */
-.navbar {
-    transition: box-shadow 0.3s ease;
+body {
+    font-family: var(--font-primary);
+    line-height: 1.7;
+    color: var(--dark-text);
+    background-color: var(--light-bg);
+    -webkit-font-smoothing: antialiased;
+    -moz-osx-font-smoothing: grayscale;
+    counter-reset: section-counter; /* Initialize section counter */
 }
 
-.navbar .navbar-brand {
-    color: var(--custom-dark-blue);
+/* --- Layout Containers --- */
+.container {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 25px;
 }
 
-.navbar .nav-link {
-    color: var(--custom-dark-text);
-    font-weight: 500;
-    padding: 0.5rem 0;
-    margin: 0 0.75rem;
+main {
+    padding-top: 40px;
+}
+
+/* --- Links --- */
+a {
+    color: var(--secondary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed-fast) ease;
+}
+
+a:hover {
+    color: var(--accent-color);
+}
+
+/* --- Headings --- */
+h1, h2, h3, h4 {
+    font-weight: 600;
+    line-height: 1.3;
+    margin-bottom: 0.75em;
+    color: var(--primary-color);
+}
+
+h1 { font-size: 2.5rem; }
+h2 {
+    font-size: 2rem;
+    margin-bottom: 2em;
+    text-align: center;
     position: relative;
-    transition: color 0.2s ease-in-out;
+    padding-top: 10px;
+}
+/* Subtle Section Numbering */
+section[id] > .container > h2::before {
+    counter-increment: section-counter;
+    content: "0" counter(section-counter) ".";
+    display: block;
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--secondary-color);
+    margin-bottom: 10px;
+    text-align: center;
 }
 
-.navbar .nav-link:hover,
-.navbar .nav-link.active {
-    color: var(--custom-bright-blue); /* Use Bootstrap primary or custom */
+
+h3 { font-size: 1.5rem; margin-bottom: 1.5em; }
+h4 { font-size: 1.15rem; margin-bottom: 0.6em; }
+
+
+/* ================================== */
+/*        Header & Navigation         */
+/* ================================== */
+header {
+    background: var(--white-color);
+    color: var(--primary-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    /* Slightly stronger initial shadow */
+    box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07);
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
+    transition: height var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
 }
 
-/* Underline effect for active/hover nav link */
-.navbar .nav-link::after {
-    content: '';
-    position: absolute;
-    bottom: -4px;
-    left: 0;
-    width: 0;
-    height: 2px;
-    background-color: var(--custom-bright-blue); /* Use Bootstrap primary or custom */
-    transition: width 0.3s ease;
-}
-
-.navbar .nav-link:hover::after,
-.navbar .nav-link.active::after {
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
     width: 100%;
 }
 
-
-/* --- Section Titles --- */
-/* Using Bootstrap classes mostly, but adding optional numbering */
-h2.section-title, h2.section-title-light {
-    font-weight: 600;
-    position: relative;
-    padding-top: 2.5rem; /* Make space for number */
-    margin-bottom: 3rem !important; /* More space below title */
-    counter-reset: section-counter; /* Reset on each title if needed, or keep global in body */
+header h1 {
+    font-size: 1.6rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--primary-color);
+    transition: font-size var(--transition-speed) ease;
 }
 
-h3.category-title {
-     font-weight: 500;
-     color: var(--custom-dark-blue);
-     margin-bottom: 2.5rem !important;
+header nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
 }
 
-/* Subtle Section Numbering (Positioned above title) */
-h2.section-title::before, h2.section-title-light::before {
-    counter-increment: section-counter; /* Uses global counter */
-    content: "0" counter(section-counter) ".";
-    display: block;
-    position: absolute;
-    top: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    font-size: 1rem;
-    font-weight: 400;
-    color: var(--custom-bright-blue); /* Primary theme color */
-    margin-bottom: 10px;
-}
-/* Adjust color for dark background */
-h2.section-title-light::before {
-     color: var(--bs-light); /* Or a specific light color */
+header nav li {
+    margin-left: 35px;
 }
 
-
-/* --- About Section --- */
-#about .profile-pic {
-    max-width: 250px; /* Control image size */
-    border: 5px solid white;
-}
-
-.highlight {
-    font-weight: 600;
-    color: var(--custom-dark-blue);
-}
-.skill-badge {
-    display: inline-block;
+header nav a {
+    color: var(--dark-text); /* Using updated darker text */
     font-weight: 500;
-    background-color: var(--custom-highlight-bg);
-    color: var(--custom-dark-blue);
-    padding: 0.2em 0.6em;
+    font-size: 0.95rem;
+    padding: 5px 0;
+    position: relative;
+    transition: color var(--transition-speed-fast) ease;
+}
+
+/* Refined underline effect */
+header nav a::after {
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2px;
+    bottom: -4px;
+    left: 0;
+    background-color: var(--secondary-color); /* Using updated secondary color */
+    transition: width var(--transition-speed) ease;
+}
+
+header nav a:hover {
+    color: var(--secondary-color); /* Using updated secondary color */
+}
+
+header nav a:hover::after,
+header nav a.active::after {
+    width: 100%;
+}
+
+header nav a.active {
+    color: var(--secondary-color); /* Using updated secondary color */
+}
+
+/* Style for header when scrolled */
+header.scrolled {
+    height: var(--header-height-scrolled);
+    /* Slightly stronger scrolled shadow */
+    box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+}
+
+header.scrolled h1 {
+    font-size: 1.5rem;
+}
+
+header.scrolled nav a {
+     font-size: 0.9rem;
+}
+
+
+/* ================================== */
+/*        Hero / About Section        */
+/* ================================== */
+#about {
+    background: transparent;
+    padding: 60px 0 80px 0;
+    text-align: center;
+    margin-bottom: 60px;
+    border-radius: 0;
+    box-shadow: none;
+}
+
+.about-content {
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+#about h2 {
+    margin-bottom: 40px;
+    font-size: 2.2rem;
+}
+
+.about-layout {
+    display: flex;
+    align-items: flex-start;
+    gap: 50px;
+    text-align: left;
+}
+
+.about-text {
+    flex: 2;
+}
+
+.about-image {
+     flex: 1;
+     max-width: 280px;
+     text-align: center;
+     margin-top: 10px;
+}
+
+
+.profile-pic {
+    width: 220px;
+    height: 220px;
+    border-radius: var(--border-radius);
+    border: 4px solid var(--white-color);
+    /* Slightly stronger shadow */
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    transition: transform var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+}
+
+.profile-pic:hover {
+    transform: translateY(-5px) scale(1.03);
+    /* Slightly stronger hover shadow */
+    box-shadow: 0 10px 25px rgba(31, 58, 90, 0.15); /* Using new primary color base */
+}
+
+.about-content p {
+    margin-bottom: 18px;
+    font-size: 1.05rem;
+    color: var(--dark-text); /* Using updated dark text */
+    line-height: 1.8;
+}
+
+/* Skill Highlighting */
+.about-content strong,
+.about-content .skill-highlight {
+    font-weight: 600;
+    color: var(--primary-color); /* Use updated primary */
+    background-color: var(--highlight-bg); /* Use updated highlight */
+    padding: 0.1em 0.4em;
     border-radius: 4px;
-    font-size: 0.9em;
     margin: 0 0.1em;
+    display: inline-block;
     line-height: 1.5;
 }
 
-/* --- Project Cards --- */
-.project-card-wrapper .card {
-    transition: transform 0.3s ease, box-shadow 0.3s ease;
-    opacity: 0; /* Start hidden for animation */
-    transform: translateY(20px);
-    transition-delay: var(--card-delay, 0s); /* Custom property for stagger */
-    position: relative; /* Needed for absolute positioned number */
-    overflow: hidden; /* Contain elements */
+/* ================================== */
+/*     Sections General Styling       */
+/* ================================== */
+section {
+    padding: 80px 0;
+    margin-bottom: 50px;
 }
 
-/* Staggered Fade-in Animation */
-.project-card-wrapper .card.is-visible {
-     opacity: 1;
-     transform: translateY(0);
-     transition-property: opacity, transform;
-     transition-duration: 0.5s; /* Control animation speed */
-     transition-timing-function: ease-out;
+section h2::after {
+    display: none;
 }
 
 
-.project-card-wrapper .card:hover {
-    transform: translateY(-5px);
-    box-shadow: var(--bs-card-box-shadow), 0 8px 25px rgba(0, 0, 0, 0.08) !important; /* Enhance Bootstrap shadow */
+/* ================================== */
+/*         Project Section            */
+/* ================================== */
+#projects {
+    background-color: transparent;
+    padding-top: 80px;
+    padding-bottom: 60px;
+    border-radius: 0;
+    box-shadow: none;
+    margin-bottom: 60px;
 }
 
-.project-card .card-title {
-    color: var(--custom-dark-blue);
-    font-weight: 600;
+.project-category {
+    margin-bottom: 60px;
 }
 
-.project-card .card-text {
-     color: var(--custom-dark-text);
-     font-size: 0.95rem;
-     line-height: 1.6;
+.project-category h3 {
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--primary-color); /* Updated primary */
+    position: relative;
+    display: inline-block;
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 10px;
 }
 
-/* Project Card Numbering (Simple Badge Style) */
-.project-card .card-number {
+.project-category h3::after {
+    content: '';
     position: absolute;
-    top: 10px;
-    left: 15px;
-    background-color: rgba(var(--bs-secondary-rgb), 0.1); /* Use Bootstrap secondary color with alpha */
-    color: var(--bs-secondary);
-    font-size: 0.75rem;
+    width: 50px;
+    height: 3px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--secondary-color); /* Updated secondary */
+}
+
+/* --- New Project List Styles --- */
+.project-list {
+    display: flex;
+    flex-direction: column;
+    gap: 35px;
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.project-item {
+    display: flex;
+    gap: 20px;
+    padding: 25px;
+    border-radius: var(--border-radius);
+    background-color: transparent;
+    border: 1px solid transparent;
+    transition: background-color var(--transition-speed-fast) ease,
+                border-color var(--transition-speed-fast) ease,
+                transform var(--transition-speed-fast) ease;
+    opacity: 0;
+    transform: translateY(20px);
+    /* Combined transition for visibility and delay */
+    transition: background-color var(--transition-speed-fast) ease,
+                border-color var(--transition-speed-fast) ease,
+                transform var(--transition-speed-fast) ease,
+                opacity 0.5s ease-out,
+                transform 0.5s ease-out,
+                transition-delay var(--card-delay, 0s);
+    overflow: hidden;
+    position: relative;
+}
+
+.project-item.is-visible {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+
+.project-item:hover {
+    background-color: var(--highlight-bg); /* Use updated highlight */
+    /* border-color: var(--border-color); */ /* Optional border */
+}
+
+/* Timeline/Date column */
+.project-timeline {
+    flex: 0 0 100px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    color: var(--subtle-text); /* Use updated subtle text */
+    padding-top: 0.2em;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    text-align: right;
+}
+
+/* Details column */
+.project-details {
+    flex: 1;
+}
+
+/* Project Title */
+.project-details h4 {
+    font-size: 1.2rem;
+    margin-bottom: 0.5em;
+    color: var(--primary-color); /* Updated primary */
     font-weight: 600;
-    padding: 0.2em 0.5em;
-    border-radius: 4px;
-    line-height: 1;
+    position: relative;
+    z-index: 1;
+}
+.project-details h4 a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-speed-fast);
+}
+/* Arrow icon */
+.project-details h4 a::after {
+    content: ' ↗';
+    font-size: 0.8em;
+    display: inline-block;
+    opacity: 0.6;
+    transition: transform var(--transition-speed-fast) ease, opacity var(--transition-speed-fast) ease;
+    transform: translateY(-2px) translateX(0);
+}
+.project-item:hover .project-details h4 a {
+    color: var(--secondary-color); /* Updated secondary */
+}
+.project-item:hover .project-details h4 a::after {
+     opacity: 1;
+     transform: translateY(-2px) translateX(3px);
+}
+/* Video link icon */
+.project-details h4 a[href*="youtube.com"]::after,
+.project-details h4 a[href*="youtu.be"]::after {
+     content: ' ▶';
+     font-size: 0.7em;
+     opacity: 0.7;
+}
+
+
+/* Project Description */
+.project-details p {
+    font-size: 0.95rem;
+    color: var(--dark-text); /* Updated dark text */
+    margin-bottom: 1em;
+    line-height: 1.7;
+    position: relative;
     z-index: 1;
 }
 
-/* --- Contact Section --- */
-#contact .btn i {
-    font-size: 1.1em; /* Slightly larger icons */
+/* --- Skill Tags --- */
+.project-tags {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    margin-top: 15px;
+    position: relative;
+    z-index: 1;
+}
+
+.tag {
+    display: inline-block;
+    /* Slightly more opaque background using updated secondary color */
+    background-color: rgba(41, 128, 185, 0.2);
+    color: var(--secondary-color); /* Use updated secondary color */
+    padding: 4px 12px;
+    border-radius: 4px;
+    font-size: 0.8rem;
+    font-weight: 500;
+    line-height: 1.4;
+    white-space: nowrap;
+    transition: background-color var(--transition-speed-fast), color var(--transition-speed-fast);
+}
+
+.project-item:hover .tag {
+    /* Slightly stronger hover background */
+    background-color: rgba(41, 128, 185, 0.3);
+    /* color: var(--primary-color); */ /* Optional: Darker text on hover */
+}
+
+/* ================================== */
+/*   Project Item Decorative Icons    */
+/* ================================== */
+
+/* General style for the decorative icon */
+.project-item::after {
+    content: '';
+    position: absolute;
+    bottom: 15px;
+    right: 15px;
+    font-size: 3.5rem;
+    line-height: 1;
+    /* Increased initial opacity */
+    opacity: 0.12;
+    z-index: 0;
+    color: var(--secondary-color); /* Use updated secondary color */
+    pointer-events: none;
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55);
+    transform: scale(0.9) rotate(-5deg);
+}
+
+/* Hover effect */
+.project-item:hover::after {
+    /* Increased hover opacity */
+    opacity: 0.25;
+    transform: scale(1.1) rotate(10deg);
+}
+
+/* --- Specific Icons (Content remains the same) --- */
+.project-personal-website::after { content: '👤'; }
+.project-google-clone::after { content: '🔍'; transform: scale(0.9) rotate(5deg); }
+.project-item.project-google-clone:hover::after { transform: scale(1.1) rotate(-10deg); }
+.project-digital-card::after { content: '💳'; }
+.project-space::after { content: '🚀'; }
+.project-birthday::after { content: '🎁'; }
+.project-responsive-test::after { content: '↔️'; font-size: 3rem; }
+.project-item.project-responsive-test:hover::after { transform: scale(1.2) rotate(0deg); }
+.project-portfolio-test::after { content: '⭐'; }
+.project-people-counter::after { content: '👥'; }
+.project-blackjack::after { content: '🃏'; font-size: 4rem; }
+.project-item.project-blackjack:hover::after { transform: scale(1.15) rotate(15deg) translateY(-5px); }
+.project-chrome-extension::after { content: '🧩'; }
+.project-login-system::after { content: '🔑'; transform: scale(0.9) rotate(10deg); }
+.project-item.project-login-system:hover::after { transform: scale(1.1) rotate(-5deg); }
+/* Specific JS Game Icon Style (now handled by showcase rule) */
+/* .project-js-game::after { content: '⚔️'; font-size: 4rem; } */
+/* .project-item.project-js-game:hover::after { transform: scale(1.1) rotate(5deg) translateX(-5px); } */
+
+
+/* --- REMOVE OLD CARD STYLES --- */
+.project-grid { display: none; }
+.project-card {
+    border: none !important;
+    box-shadow: none !important;
+    transform: none !important;
+    opacity: 1 !important;
+    padding: 0 !important;
+    display: none !important;
+}
+.project-card::before,
+.project-card::after {
+    content: none !important;
+    display: none !important;
+}
+.demo-link { display: none !important; }
+/* --- End of Project Section Cleanup --- */
+
+
+/* ================================== */
+/*      Final Project Showcase        */
+/* ================================== */
+
+.final-project-showcase {
+    margin-top: 70px; /* Add significant space above */
+    margin-bottom: 30px; /* Space below before next section */
+    padding-top: 40px; /* Space between separator and heading */
+    border-top: 1px dashed var(--border-color); /* Visual separator line */
+    position: relative; /* For potential future pseudo-elements */
+}
+
+.final-project-showcase h3 {
+    text-align: center;
+    color: var(--primary-color);
+    margin-bottom: 45px; /* More space below heading */
+    font-size: 1.7rem; /* Larger than category h3 */
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    position: relative;
+    display: inline-block; /* Allows centering tricks */
+    left: 50%;
+    transform: translateX(-50%);
+    padding-bottom: 12px;
+}
+
+/* Optional: Add underline to showcase heading */
+.final-project-showcase h3::after {
+    content: '';
+    position: absolute;
+    width: 70px; /* Longer underline */
+    height: 3px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: var(--accent-color); /* Use accent color for emphasis */
+}
+
+/* Style the specific final project item within the showcase */
+.final-project-showcase .project-item.project-js-game {
+    /* Slightly more prominent background */
+    background-color: rgba(41, 128, 185, 0.04); /* Subtle highlight always present */
+    border: 1px solid transparent;
+    border-left: 4px solid var(--secondary-color); /* Add a colored left border */
+    padding: 30px 25px 30px 35px; /* Increase padding, more on left */
+    box-shadow: var(--card-shadow); /* Add a base shadow */
+    margin-left: auto;  /* Center the block if container is wider */
+    margin-right: auto; /* Center the block if container is wider */
+    max-width: 95%; /* Prevent it from being full width if needed */
+    /* Inherit visibility transitions, add showcase-specific ones */
+    transition: background-color var(--transition-speed) ease,
+                border-color var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease,
+                transform var(--transition-speed) ease,
+                opacity 0.5s ease-out, /* Keep visibility transition */
+                transform 0.5s ease-out, /* Keep visibility transition */
+                transition-delay var(--card-delay, 0s); /* Keep delay */
+}
+
+/* Ensure visibility class still applies */
+.final-project-showcase .project-item.project-js-game.is-visible {
+     opacity: 1;
+     transform: translateY(0);
 }
 
 
-/* --- Scroll-to-Top Button --- */
+.final-project-showcase .project-item.project-js-game:hover {
+    background-color: var(--highlight-bg); /* Use standard hover highlight */
+    border-left-color: var(--accent-color); /* Change border color on hover */
+    border-color: var(--secondary-color); /* Add subtle border all around on hover */
+    box-shadow: var(--card-hover-shadow); /* Increase shadow on hover */
+    transform: translateY(-5px) scale(1.01); /* Add lift & slight scale effect */
+}
+
+/* Make the icon bigger and more prominent for the final project */
+.final-project-showcase .project-item.project-js-game::after {
+    content: '⚔️'; /* Ensure content is set here */
+    font-size: 5rem; /* Significantly larger icon */
+    opacity: 0.20; /* More visible initially */
+    transform: scale(1) rotate(-8deg);
+    right: 20px;
+    bottom: 20px;
+    color: var(--secondary-color); /* Ensure color is set */
+    /* Override general transitions for the icon */
+    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), color 0.3s ease;
+}
+
+.final-project-showcase .project-item.project-js-game:hover::after {
+     opacity: 0.45; /* More visible on hover */
+     transform: scale(1.18) rotate(10deg) translateX(-10px); /* More dynamic hover */
+     color: var(--accent-color); /* Change color on hover */
+}
+
+
+/* ================================== */
+/*         Contact Section            */
+/* ================================== */
+#contact {
+    background: var(--primary-color); /* Use updated primary */
+    color: var(--light-bg); /* Use updated light bg */
+    padding: 80px 20px;
+    text-align: center;
+    border-radius: var(--border-radius);
+    margin-bottom: 60px;
+}
+
+#contact h2 {
+    color: var(--white-color);
+    margin-bottom: 25px;
+}
+#contact > .container > h2::before {
+    content: none; /* Remove numbering for contact */
+}
+
+#contact p {
+    margin-bottom: 35px;
+    font-size: 1.15rem;
+    color: var(--light-text); /* Use updated brighter light text */
+    max-width: 650px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.8;
+}
+
+#contact ul {
+    list-style: none;
+    padding: 0;
+    display: flex;
+    justify-content: center;
+    gap: 30px;
+    flex-wrap: wrap;
+}
+
+#contact li {
+    margin-bottom: 0;
+    font-size: 1.1rem;
+}
+
+#contact a {
+    color: var(--white-color);
+    font-weight: 500;
+    word-break: break-all;
+    padding: 5px 10px;
+    border-radius: 4px;
+    transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    border: 1px solid transparent;
+}
+
+#contact a:hover {
+    /* Slightly more opaque hover background */
+    background-color: rgba(255, 255, 255, 0.15);
+    border-color: var(--secondary-color); /* Use updated secondary color */
+    color: var(--white-color);
+    text-decoration: none;
+}
+
+/* Icons (Content remains the same) */
+#contact li a[href^="mailto:"]::before { content: '📧'; display: inline-block; }
+#contact li a[href*="github.com"]::before { content: '💻'; display: inline-block; }
+/* #contact li a[href*="linkedin.com"]::before { content: '💼'; display: inline-block; } */
+
+
+/* ================================== */
+/*             Footer                 */
+/* ================================== */
+footer {
+    text-align: center;
+    padding: 35px 20px;
+    margin-top: 0;
+    color: var(--subtle-text); /* Use updated subtle text */
+    background-color: var(--light-bg); /* Match body background */
+    font-size: 0.9rem;
+}
+
+/* ================================== */
+/*       Scroll-to-Top Button         */
+/* ================================== */
 .scroll-top-btn {
     position: fixed;
     bottom: 30px;
     right: 30px;
+    background-color: var(--primary-color); /* Use updated primary */
+    color: var(--white-color);
+    border: none;
+    border-radius: var(--border-radius);
     width: 45px;
     height: 45px;
-    font-size: 1.1rem; /* Use relative units */
-    border-radius: 50%; /* Make it circular */
-    display: flex; /* Center icon */
-    justify-content: center;
-    align-items: center;
+    font-size: 20px;
+    line-height: 45px;
+    text-align: center;
+    cursor: pointer;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(15px);
-    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
-    z-index: 1050; /* Ensure it's above most elements */
+    transform: translateY(15px) scale(0.95);
+    transition: opacity var(--transition-speed) ease,
+                visibility var(--transition-speed) ease,
+                transform var(--transition-speed) ease,
+                background-color var(--transition-speed-fast) ease;
+    z-index: 999;
+    /* Slightly stronger shadow */
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.12);
 }
 
 .scroll-top-btn.visible {
-    opacity: 0.7;
+    opacity: 0.85; /* Slightly more opaque */
     visibility: visible;
-    transform: translateY(0);
+    transform: translateY(0) scale(1);
 }
 
 .scroll-top-btn:hover {
+    background-color: var(--secondary-color); /* Use updated secondary */
     opacity: 1;
-    /* Bootstrap primary hover color is handled by .btn-primary:hover */
+    transform: translateY(-3px) scale(1.05);
 }
 
+/* ================================== */
+/*       Responsive Design            */
+/* ================================== */
 
-/* --- Responsive Adjustments (Bootstrap handles most) --- */
+/* Medium devices (tablets, less than 992px) */
 @media (max-width: 991.98px) {
-    /* Adjust title numbering size slightly */
-    h2.section-title::before, h2.section-title-light::before {
+    html {
+        font-size: 15px;
+        scroll-padding-top: calc(var(--header-height-scrolled) + 15px);
+    }
+    .container {
+        max-width: 920px;
+        padding: 0 20px;
+    }
+    .about-layout {
+        gap: 40px;
+    }
+    .profile-pic {
+        width: 200px;
+        height: 200px;
+    }
+     section[id] > .container > h2::before {
         font-size: 0.95rem;
     }
+    .project-timeline {
+        flex-basis: 90px;
+    }
 }
 
+
+/* Small devices (landscape phones, less than 768px) */
 @media (max-width: 767.98px) {
-    /* Reduce top padding for titles on smaller screens */
-     h2.section-title, h2.section-title-light {
-        padding-top: 2rem;
+    html {
+        font-size: 14px;
+        scroll-padding-top: 80px; /* Revert to fixed padding for simple header */
     }
-    h2.section-title::before, h2.section-title-light::before {
+
+    header {
+       height: auto;
+       padding: 15px 0;
+       position: static; /* Change from sticky */
+    }
+    header.scrolled {
+        height: auto;
+        box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07); /* Match non-scrolled shadow */
+    }
+    header.scrolled h1, header.scrolled nav a {
+        font-size: inherit; /* Reset font size changes */
+    }
+
+    header .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    header h1 {
+        margin-bottom: 15px;
+        font-size: 1.7rem;
+    }
+    header nav ul {
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 5px;
+    }
+    header nav li {
+        margin: 5px 12px;
+    }
+    header nav a {
+        font-size: 1rem;
+    }
+    /* Remove scroll padding adjustments when header isn't sticky */
+    html {
+        scroll-padding-top: 20px; /* Adjust to general top padding */
+    }
+
+    h1 { font-size: 2.1rem; }
+    h2 { font-size: 1.9rem; margin-bottom: 1.5em;}
+    h3 { font-size: 1.4rem; }
+
+    section {
+        padding: 60px 0;
+    }
+
+    #about {
+        padding: 50px 0 60px 0;
+    }
+    .about-layout {
+        flex-direction: column;
+        align-items: center;
+        text-align: center;
+    }
+    .about-text {
+        text-align: left;
+        max-width: 600px;
+        margin: 0 auto;
+    }
+    .profile-pic {
+         width: 180px;
+         height: 180px;
+         margin-bottom: 30px;
+    }
+
+     section[id] > .container > h2::before {
         font-size: 0.9rem;
     }
 
-    /* Center card number on smaller screens if desired */
-    /* .project-card .card-number {
-        left: 50%;
-        transform: translateX(-50%);
+    /* Stack project items */
+    .project-item {
+        flex-direction: column;
+        gap: 10px;
+        padding: 20px;
     }
-    .project-card .card-title {
-        margin-top: 2rem; Center title if number is centered
-    } */
+    .project-timeline {
+        flex-basis: auto;
+        text-align: left;
+        font-size: 0.8rem;
+        padding-top: 0;
+        margin-bottom: 5px;
+    }
+    .project-details h4 {
+        font-size: 1.1rem;
+    }
+    .project-details p {
+        font-size: 0.9rem;
+    }
+    .tag {
+        font-size: 0.75rem;
+        padding: 3px 10px;
+    }
+
+    /* Responsive showcase adjustments */
+    .final-project-showcase h3 {
+        font-size: 1.6rem;
+        margin-bottom: 35px;
+    }
+    .final-project-showcase {
+         margin-top: 55px;
+         padding-top: 30px;
+    }
+     .final-project-showcase .project-item.project-js-game {
+        padding: 25px 20px 25px 30px; /* Adjust padding */
+        max-width: 100%; /* Take full width */
+        border-left-width: 3px;
+     }
+     /* Slightly smaller icon on medium screens */
+     .final-project-showcase .project-item.project-js-game::after {
+        font-size: 4rem;
+        right: 15px;
+        bottom: 15px;
+     }
+
+
+    #contact {
+        padding: 60px 15px;
+    }
+     #contact ul {
+         gap: 20px;
+     }
+
+    .scroll-top-btn {
+        width: 42px;
+        height: 42px;
+        line-height: 42px;
+        font-size: 18px;
+        bottom: 20px;
+        right: 20px;
+    }
+}
+
+/* Extra small devices (portrait phones, less than 576px) */
+@media (max-width: 575.98px) {
+    html {
+        font-size: 13.5px;
+    }
+    body {
+        line-height: 1.65;
+    }
+    .container {
+        padding: 0 15px;
+    }
+
+    h1 { font-size: 1.9rem; }
+    h2 { font-size: 1.7rem; margin-bottom: 1.2em; }
+    h3 { font-size: 1.3rem; }
+
+    header nav li {
+        margin: 5px 8px;
+    }
+
+    section {
+        padding: 50px 0;
+    }
+
+    #about {
+        padding: 40px 0 50px 0;
+    }
+     .profile-pic {
+         width: 150px;
+         height: 150px;
+    }
+    .about-content p {
+        font-size: 1rem;
+    }
+     .about-content strong, .about-content .skill-highlight {
+         line-height: 1.6;
+         padding: 0.1em 0.3em;
+     }
+
+    .project-item {
+        padding: 15px;
+    }
+    .project-timeline {
+        font-size: 0.75rem;
+    }
+    .project-details h4 {
+        font-size: 1.05rem;
+    }
+     .project-details h4 a::after {
+        font-size: 0.7em;
+     }
+    .project-details p {
+        font-size: 0.85rem;
+    }
+    .tag {
+        font-size: 0.7rem;
+        padding: 3px 8px;
+    }
+    .project-tags {
+        gap: 6px;
+    }
+
+    /* Adjusted project icons for small screens */
+    .project-item::after {
+        /* Option 1: Hide */
+        /* display: none; */
+
+        /* Option 2: Smaller/Subtler */
+        font-size: 2.2rem; /* Smaller size */
+        opacity: 0.08;    /* Less initial opacity */
+        bottom: 8px;
+        right: 8px;
+    }
+    .project-item:hover::after {
+         opacity: 0.15; /* Less hover opacity */
+         transform: scale(1.05) rotate(5deg); /* Simpler hover */
+    }
+     /* Adjust extra large icons */
+     .project-blackjack::after {
+          font-size: 2.5rem; /* Make them smaller too */
+     }
+
+
+    /* Responsive showcase adjustments */
+     .final-project-showcase h3 {
+        font-size: 1.45rem;
+        padding-bottom: 10px;
+     }
+      .final-project-showcase h3::after {
+         width: 60px;
+     }
+     .final-project-showcase {
+         margin-top: 45px;
+         padding-top: 25px;
+         border-top: none; /* Remove top border on smallest screens */
+     }
+     .final-project-showcase .project-item.project-js-game {
+        padding: 20px 15px 20px 20px;
+        border-left-width: 3px;
+     }
+     /* Even smaller icon on small screens */
+      .final-project-showcase .project-item.project-js-game::after {
+        font-size: 3.2rem;
+        right: 10px;
+        bottom: 10px;
+        opacity: 0.15;
+     }
+     .final-project-showcase .project-item.project-js-game:hover::after {
+         opacity: 0.35;
+         transform: scale(1.1) rotate(6deg) translateX(-5px);
+     }
+
+
+    #contact {
+        padding: 50px 10px;
+    }
+    #contact p, #contact li {
+        font-size: 1rem;
+    }
+    #contact ul {
+         gap: 15px;
+     }
+     #contact a {
+         padding: 4px 8px;
+         gap: 6px;
+     }
+
+    footer {
+        padding: 30px 10px;
+        font-size: 0.85rem;
+    }
+
+    .scroll-top-btn {
+        width: 40px;
+        height: 40px;
+        line-height: 40px;
+        font-size: 16px;
+        bottom: 15px;
+        right: 15px;
+    }
 }

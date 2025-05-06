@@ -119,31 +119,32 @@ document.addEventListener('DOMContentLoaded', () => {
     handleScrollTopBtn();
 
 
-    // --- Feature 4: Staggered Fade-in Animation for Project Cards ---
-    const projectCards = document.querySelectorAll('.project-card');
+    // --- Feature 4: Staggered Fade-in Animation for Project Items ---
+    // Updated selector from .project-card to .project-item
+    const projectItems = document.querySelectorAll('.project-item');
 
-    if ('IntersectionObserver' in window && projectCards.length > 0) {
+    if ('IntersectionObserver' in window && projectItems.length > 0) {
         const observerOptions = {
             root: null,
-            rootMargin: '0px 0px -80px 0px', // Trigger when card is about 80px from bottom edge
+            rootMargin: '0px 0px -80px 0px', // Trigger when item is about 80px from bottom edge
             threshold: 0.1 // Need at least 10% visible
         };
 
         // Keep track of the index globally for staggering across different observer triggers
-        let cardIndex = 0;
-        const processedCards = new WeakSet(); // Keep track of cards already processed
+        let itemIndex = 0;
+        const processedItems = new WeakSet(); // Keep track of items already processed
 
         const observerCallback = (entries, observer) => {
             entries.forEach((entry) => {
-                // Check if card hasn't been processed already to handle potential multiple intersections
-                if (entry.isIntersecting && !processedCards.has(entry.target)) {
+                // Check if item hasn't been processed already to handle potential multiple intersections
+                if (entry.isIntersecting && !processedItems.has(entry.target)) {
                     // Calculate delay based on the overall index
-                    const delay = cardIndex * 100; // 100ms delay between cards
-                    entry.target.style.setProperty('--card-delay', `${delay}ms`);
+                    const delay = itemIndex * 100; // 100ms delay between items
+                    entry.target.style.setProperty('--card-delay', `${delay}ms`); // Keep CSS var name for simplicity or change if needed
                     entry.target.classList.add('is-visible');
 
-                    processedCards.add(entry.target); // Mark card as processed
-                    cardIndex++; // Increment index for the next card
+                    processedItems.add(entry.target); // Mark item as processed
+                    itemIndex++; // Increment index for the next item
 
                     observer.unobserve(entry.target); // Stop observing once animated
                 }
@@ -151,19 +152,20 @@ document.addEventListener('DOMContentLoaded', () => {
             });
         };
 
-        const cardObserver = new IntersectionObserver(observerCallback, observerOptions);
+        const itemObserver = new IntersectionObserver(observerCallback, observerOptions);
 
-        // Observe each card individually to trigger based on its own visibility
-        projectCards.forEach(card => {
-            cardObserver.observe(card);
+        // Observe each item individually to trigger based on its own visibility
+        projectItems.forEach(item => {
+            itemObserver.observe(item);
         });
 
     } else {
-        // Fallback for older browsers or if no cards exist
-        console.warn("Intersection Observer not supported or no project cards found. Showing all cards immediately.");
-        projectCards.forEach(card => {
-            card.style.setProperty('--card-delay', '0ms'); // Ensure delay is 0
-            card.classList.add('is-visible');
+        // Fallback for older browsers or if no items exist
+        // Updated console message
+        console.warn("Intersection Observer not supported or no project items found. Showing all items immediately.");
+        projectItems.forEach(item => {
+            item.style.setProperty('--card-delay', '0ms'); // Ensure delay is 0
+            item.classList.add('is-visible');
         });
     }
 
