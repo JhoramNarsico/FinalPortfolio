@@ -1,994 +1,253 @@
 /* ================================== */
-/*            Modern Overhaul         */
+/*          Custom Styles             */
+/*     (Overrides Bootstrap Vars      */
+/*      & Adds Custom Rules)          */
 /* ================================== */
 
-/* --- Google Font Import --- */
-@import url('https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap'); /* Added 500 weight */
+/* --- Font --- */
+body {
+    font-family: 'Poppins', sans-serif;
+    /* Optional: Slightly increase default font size if needed */
+    /* font-size: 1.05rem; */
+}
 
-/* --- CSS Variables (Customize Here) --- */
+/* --- Color Variables (Optional: Define custom ones or use Bootstrap's) --- */
 :root {
-    --primary-color: #2c3e50; /* Dark Blue/Grey */
-    --secondary-color: #3498db; /* Bright Blue - Keep for now */
-    --accent-color: #e74c3c; /* Soft Red/Orange - Use sparingly */
-    --light-bg: #f7f9fc; /* Slightly updated light background */
-    --white-color: #ffffff;
-    --dark-text: #34495e; /* Dark Grey Text */
-    --light-text: #aab2bd; /* Slightly softer light text */
-    --border-color: #e1e5ea; /* Slightly adjusted border */
-    --highlight-bg: rgba(52, 152, 219, 0.1); /* Subtle background for skills */
-    --subtle-text: #7f8c8d; /* For less important text like numbers */
+    /* Example: Override Bootstrap primary color */
+    /* --bs-primary: #2c3e50;
+    --bs-primary-rgb: 44, 62, 80; */
 
-    --header-height: 70px;
-    --header-height-scrolled: 60px; /* Explicit scrolled height */
-
-    --font-primary: 'Poppins', sans-serif;
-
-    --border-radius: 6px; /* Slightly smaller radius */
-    --card-shadow: 0 3px 10px rgba(0, 0, 0, 0.05); /* Softer shadow */
-    --card-hover-shadow: 0 5px 18px rgba(0, 0, 0, 0.08); /* Slightly enhanced hover shadow */
-    --transition-speed: 0.3s;
-    --transition-speed-fast: 0.2s;
+    /* Custom Colors (Can be used alongside Bootstrap classes) */
+    --custom-dark-blue: #2c3e50;
+    --custom-bright-blue: #3498db;
+    --custom-soft-red: #e74c3c;
+    --custom-light-bg: #f7f9fc; /* Similar to Bootstrap's 'light' */
+    --custom-dark-text: #34495e;
+    --custom-subtle-text: #7f8c8d;
+    --custom-highlight-bg: rgba(52, 152, 219, 0.1);
 }
 
 /* --- Base Styles --- */
-* {
-    box-sizing: border-box;
-    margin: 0;
-    padding: 0;
-}
-
 html {
     scroll-behavior: smooth;
-    font-size: 16px; /* Maintain base */
-    /* Adjusted scroll padding for scrolled header */
-    scroll-padding-top: calc(var(--header-height-scrolled) + 20px);
 }
 
-body {
-    font-family: var(--font-primary);
-    line-height: 1.7;
-    color: var(--dark-text);
-    background-color: var(--light-bg);
-    -webkit-font-smoothing: antialiased;
-    -moz-osx-font-smoothing: grayscale;
-    counter-reset: section-counter; /* Initialize section counter */
+/* Adjust scroll padding top based on sticky navbar height */
+/* Body's data-bs-offset might handle this, but this is a fallback */
+/* body {
+    padding-top: 70px; /* Adjust if navbar height changes */
+/* } */
+
+/* --- Navbar Customization --- */
+.navbar {
+    transition: box-shadow 0.3s ease;
 }
 
-/* --- Layout Containers --- */
-.container {
-    max-width: 1100px; /* Slightly reduced max-width */
-    margin: 0 auto;
-    padding: 0 25px; /* Slightly increased padding */
+.navbar .navbar-brand {
+    color: var(--custom-dark-blue);
 }
 
-main {
-    padding-top: 40px; /* Increased space below header */
-}
-
-/* --- Links --- */
-a {
-    color: var(--secondary-color);
-    text-decoration: none;
-    transition: color var(--transition-speed-fast) ease;
-}
-
-a:hover {
-    color: var(--accent-color);
-}
-
-/* --- Headings --- */
-h1, h2, h3, h4 {
-    font-weight: 600;
-    line-height: 1.3;
-    margin-bottom: 0.75em;
-    color: var(--primary-color);
-}
-
-h1 { font-size: 2.5rem; }
-h2 {
-    font-size: 2rem;
-    margin-bottom: 2em; /* More space below section titles */
-    text-align: center;
-    position: relative; /* Needed for pseudo-element */
-    padding-top: 10px; /* Space for number */
-}
-/* Subtle Section Numbering (Inspired by BC) */
-section[id] > .container > h2::before { /* Target H2 directly inside section container */
-    counter-increment: section-counter;
-    content: "0" counter(section-counter) ".";
-    display: block;
-    font-size: 1rem; /* Smaller than heading */
-    font-weight: 400;
-    color: var(--secondary-color); /* Use theme color */
-    margin-bottom: 10px; /* Space between number and title */
-    text-align: center;
-}
-
-
-h3 { font-size: 1.5rem; margin-bottom: 1.5em; } /* More space below category title */
-h4 { font-size: 1.15rem; margin-bottom: 0.6em; } /* Slightly adjusted */
-
-
-/* ================================== */
-/*        Header & Navigation         */
-/* ================================== */
-header {
-    background: var(--white-color);
-    color: var(--primary-color);
-    position: sticky;
-    top: 0;
-    z-index: 1000;
-    box-shadow: 0 1px 5px rgba(0, 0, 0, 0.07); /* Slightly softer shadow */
-    height: var(--header-height);
-    display: flex;
-    align-items: center;
-    transition: height var(--transition-speed) ease,
-                box-shadow var(--transition-speed) ease;
-}
-
-header .container {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    width: 100%;
-}
-
-header h1 {
-    font-size: 1.6rem; /* Slightly smaller */
-    margin: 0;
-    font-weight: 700;
-    color: var(--primary-color);
-    transition: font-size var(--transition-speed) ease;
-}
-
-header nav ul {
-    list-style: none;
-    display: flex;
-    margin: 0;
-    padding: 0;
-}
-
-header nav li {
-    margin-left: 35px; /* Slightly more space */
-}
-
-header nav a {
-    color: var(--dark-text);
-    font-weight: 500; /* Slightly bolder */
-    font-size: 0.95rem; /* Slightly smaller */
-    padding: 5px 0;
+.navbar .nav-link {
+    color: var(--custom-dark-text);
+    font-weight: 500;
+    padding: 0.5rem 0;
+    margin: 0 0.75rem;
     position: relative;
-    transition: color var(--transition-speed-fast) ease;
+    transition: color 0.2s ease-in-out;
 }
 
-/* Refined underline effect */
-header nav a::after {
+.navbar .nav-link:hover,
+.navbar .nav-link.active {
+    color: var(--custom-bright-blue); /* Use Bootstrap primary or custom */
+}
+
+/* Underline effect for active/hover nav link */
+.navbar .nav-link::after {
     content: '';
     position: absolute;
+    bottom: -4px;
+    left: 0;
     width: 0;
     height: 2px;
-    bottom: -4px; /* Slightly lower */
-    left: 0;
-    background-color: var(--secondary-color);
-    transition: width var(--transition-speed) ease;
+    background-color: var(--custom-bright-blue); /* Use Bootstrap primary or custom */
+    transition: width 0.3s ease;
 }
 
-header nav a:hover {
-    color: var(--secondary-color);
-}
-
-header nav a:hover::after,
-header nav a.active::after {
+.navbar .nav-link:hover::after,
+.navbar .nav-link.active::after {
     width: 100%;
 }
 
-header nav a.active {
-    color: var(--secondary-color);
-    /* font-weight: 600; */ /* Keep weight consistent, color/underline is enough */
-}
 
-/* Style for header when scrolled */
-header.scrolled {
-    height: var(--header-height-scrolled); /* Use variable */
-    box-shadow: 0 2px 10px rgba(0, 0, 0, 0.08); /* Slightly stronger shadow */
-}
-
-header.scrolled h1 {
-    font-size: 1.5rem;
-}
-
-header.scrolled nav a {
-     font-size: 0.9rem;
-}
-
-
-/* ================================== */
-/*        Hero / About Section        */
-/* ================================== */
-#about {
-    background: transparent; /* Remove background, let body show */
-    padding: 60px 0 80px 0; /* Adjust padding */
-    text-align: center;
-    margin-bottom: 60px;
-    border-radius: 0; /* Remove border/shadow from section itself */
-    box-shadow: none;
-}
-
-.about-content {
-    max-width: 900px; /* Slightly wider */
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-#about h2 {
-    margin-bottom: 40px;
-    font-size: 2.2rem;
-}
-
-.about-layout {
-    display: flex;
-    align-items: flex-start; /* Align items to the top */
-    gap: 50px; /* Increased gap */
-    text-align: left;
-}
-
-.about-text {
-    flex: 2;
-}
-
-.about-image {
-     flex: 1;
-     max-width: 280px; /* Slightly larger image container */
-     text-align: center;
-     margin-top: 10px; /* Align top edge visually better with text */
-}
-
-
-.profile-pic {
-    width: 220px; /* Adjust size */
-    height: 220px;
-    border-radius: var(--border-radius); /* Use consistent border-radius */
-    border: 4px solid var(--white-color); /* White border */
-    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1); /* Slightly stronger shadow */
-    object-fit: cover;
-    display: block;
-    margin: 0 auto;
-    transition: transform var(--transition-speed) ease,
-                box-shadow var(--transition-speed) ease;
-}
-
-.profile-pic:hover {
-    transform: translateY(-5px) scale(1.03); /* Lift and slightly enlarge */
-    box-shadow: 0 8px 20px rgba(44, 62, 80, 0.15);
-}
-
-.about-content p {
-    margin-bottom: 18px; /* Slightly more space between paragraphs */
-    font-size: 1.05rem;
-    color: var(--dark-text);
-    line-height: 1.8;
-}
-
-/* Skill Highlighting */
-.about-content strong,
-.about-content .skill-highlight { /* Add class for more control if needed */
+/* --- Section Titles --- */
+/* Using Bootstrap classes mostly, but adding optional numbering */
+h2.section-title, h2.section-title-light {
     font-weight: 600;
-    color: var(--primary-color);
-    background-color: var(--highlight-bg); /* Subtle background */
-    padding: 0.1em 0.4em; /* Small padding */
-    border-radius: 4px; /* Rounded corners */
-    margin: 0 0.1em; /* Tiny space around */
-    display: inline-block; /* Ensure padding works correctly */
-    line-height: 1.5; /* Adjust line height slightly for inline block */
-}
-
-/* ================================== */
-/*     Sections General Styling       */
-/* ================================== */
-section {
-    padding: 80px 0; /* Increased vertical padding */
-    margin-bottom: 50px; /* Consistent bottom margin */
-}
-
-/* Remove default H2 underline if any */
-section h2::after {
-    display: none;
-}
-
-
-/* ================================== */
-/*         Project Section            */
-/* ================================== */
-#projects {
-    background-color: var(--white-color); /* Keep white background for contrast */
-    padding-top: 80px;
-    padding-bottom: 80px;
-    border-radius: var(--border-radius);
-    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05); /* Subtle container shadow */
-    margin-bottom: 60px;
-    counter-reset: project-counter; /* Initialize project counter for this section */
-}
-
-.project-category {
-    margin-bottom: 70px; /* More space between categories */
-}
-
-.project-category h3 {
-    text-align: center;
-    margin-bottom: 50px;
-    color: var(--primary-color);
     position: relative;
-    display: inline-block;
+    padding-top: 2.5rem; /* Make space for number */
+    margin-bottom: 3rem !important; /* More space below title */
+    counter-reset: section-counter; /* Reset on each title if needed, or keep global in body */
+}
+
+h3.category-title {
+     font-weight: 500;
+     color: var(--custom-dark-blue);
+     margin-bottom: 2.5rem !important;
+}
+
+/* Subtle Section Numbering (Positioned above title) */
+h2.section-title::before, h2.section-title-light::before {
+    counter-increment: section-counter; /* Uses global counter */
+    content: "0" counter(section-counter) ".";
+    display: block;
+    position: absolute;
+    top: 0;
     left: 50%;
     transform: translateX(-50%);
-    padding-bottom: 10px;
-}
-
-/* Refined category underline */
-.project-category h3::after {
-    content: '';
-    position: absolute;
-    width: 50px; /* Shorter, centered underline */
-    height: 3px;
-    bottom: 0;
-    left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--secondary-color);
-}
-
-.project-grid {
-    display: grid;
-    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-    gap: 30px; /* Slightly reduced gap */
-}
-
-.project-card {
-    background: var(--white-color);
-    border: 1px solid var(--border-color);
-    border-radius: var(--border-radius);
-    padding: 25px 30px; /* Adjusted padding */
-    box-shadow: var(--card-shadow);
-    display: flex;
-    flex-direction: column;
-    opacity: 0;
-    transform: translateY(20px);
-    transition: transform var(--transition-speed) ease,
-                box-shadow var(--transition-speed) ease,
-                opacity 0.5s ease-out, /* Slightly faster opacity */
-                transition-delay var(--card-delay, 0s);
-    position: relative; /* Needed for counter and pseudo-elements */
-    padding-top: 40px; /* Space for the number */
-    overflow: hidden; /* Prevent pseudo-elements spilling out */
-}
-
-/* Project Card Numbering (Inspired by BC) */
-.project-card::before {
-    counter-increment: project-counter;
-    content: "0" counter(project-counter);
-    position: absolute;
-    top: 15px;
-    left: 30px;
-    font-size: 0.9rem;
-    font-weight: 500;
-    color: var(--subtle-text); /* Subtle color */
-    z-index: 1; /* Make sure number is above decorations */
-}
-
-.project-card:hover {
-    transform: translateY(-6px); /* Slightly more lift */
-    box-shadow: var(--card-hover-shadow);
-}
-
-.project-card.is-visible {
-    opacity: 1;
-    transform: translateY(0);
-}
-
-.project-card h4 {
-    color: var(--primary-color);
+    font-size: 1rem;
+    font-weight: 400;
+    color: var(--custom-bright-blue); /* Primary theme color */
     margin-bottom: 10px;
-    font-size: 1.2rem; /* Slightly larger */
-    position: relative; /* Ensure heading is above decorations */
-    z-index: 1;
+}
+/* Adjust color for dark background */
+h2.section-title-light::before {
+     color: var(--bs-light); /* Or a specific light color */
 }
 
-.project-card p {
-    font-size: 0.95rem;
-    color: var(--dark-text);
-    margin-bottom: 30px; /* More space before link */
-    flex-grow: 1;
-    line-height: 1.7; /* Increased line height */
-    position: relative; /* Ensure text is above decorations */
-    z-index: 1;
+
+/* --- About Section --- */
+#about .profile-pic {
+    max-width: 250px; /* Control image size */
+    border: 5px solid white;
 }
 
-/* Refined Demo Link */
-.demo-link {
-    display: inline-flex; /* Use flex for icon alignment */
-    align-items: center;
-    gap: 8px; /* Space between text and icon */
-    align-self: flex-start;
-    background-color: transparent; /* Transparent background */
-    color: var(--secondary-color); /* Theme color text */
-    padding: 8px 0; /* Only vertical padding, rely on text for width */
-    border-radius: 0; /* Remove radius */
+.highlight {
     font-weight: 600;
-    font-size: 0.9rem;
-    text-transform: uppercase;
-    letter-spacing: 0.8px; /* Wider spacing */
-    transition: color var(--transition-speed-fast) ease, transform var(--transition-speed-fast) ease;
-    border-bottom: 2px solid transparent; /* Placeholder for hover underline */
-    margin-top: auto; /* Push to bottom */
-    position: relative; /* Ensure link is above decorations */
-    z-index: 1;
+    color: var(--custom-dark-blue);
 }
-
-.demo-link::after { /* Arrow Icon */
-    content: '→';
-    font-size: 1.2em; /* Slightly larger arrow */
-    transition: transform var(--transition-speed-fast) ease;
-}
-
-.demo-link:hover {
-    color: var(--accent-color);
-    background-color: transparent; /* Ensure no bg on hover */
-    transform: translateX(4px); /* Move text slightly right */
-    border-bottom-color: var(--accent-color); /* Add underline on hover */
-}
-.demo-link:hover::after {
-     transform: translateX(6px); /* Move arrow further right */
-}
-/* Keep View Demo link distinct */
-.demo-link[href*="youtube.com"]::before,
-.demo-link[href*="youtu.be"]::before { /* Simple video icon */
-    content: '▶';
-    margin-right: 5px;
-    font-size: 0.8em;
-}
-.demo-link[href*="youtube.com"]::after,
-.demo-link[href*="youtu.be"]::after {
-     content: ''; /* Hide arrow for video links */
-}
-
-/* --- Project Card Decorations --- */
-/* Base styles for decorative pseudo-elements */
-.project-card::before,
-.project-card::after {
-    content: ''; /* Default empty content */
-    position: absolute;
-    z-index: 0; /* Behind content (text, link, number have z-index: 1) */
-    opacity: 0.08; /* Subtle */
-    font-size: 3.5rem; /* Adjust size as needed */
-    line-height: 1;
-    color: var(--primary-color);
-    transition: opacity var(--transition-speed-fast) ease, transform var(--transition-speed-fast) ease;
-    pointer-events: none; /* Don't interfere with clicks */
-}
-/* Specific style for Project Card Numbering (was ::before, needs to be separate) */
-.project-card > span.card-number {
-    counter-increment: project-counter;
-    content: "0" counter(project-counter);
-    position: absolute;
-    top: 15px;
-    left: 30px;
-    font-size: 0.9rem;
+.skill-badge {
+    display: inline-block;
     font-weight: 500;
-    color: var(--subtle-text);
+    background-color: var(--custom-highlight-bg);
+    color: var(--custom-dark-blue);
+    padding: 0.2em 0.6em;
+    border-radius: 4px;
+    font-size: 0.9em;
+    margin: 0 0.1em;
+    line-height: 1.5;
+}
+
+/* --- Project Cards --- */
+.project-card-wrapper .card {
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    opacity: 0; /* Start hidden for animation */
+    transform: translateY(20px);
+    transition-delay: var(--card-delay, 0s); /* Custom property for stagger */
+    position: relative; /* Needed for absolute positioned number */
+    overflow: hidden; /* Contain elements */
+}
+
+/* Staggered Fade-in Animation */
+.project-card-wrapper .card.is-visible {
+     opacity: 1;
+     transform: translateY(0);
+     transition-property: opacity, transform;
+     transition-duration: 0.5s; /* Control animation speed */
+     transition-timing-function: ease-out;
+}
+
+
+.project-card-wrapper .card:hover {
+    transform: translateY(-5px);
+    box-shadow: var(--bs-card-box-shadow), 0 8px 25px rgba(0, 0, 0, 0.08) !important; /* Enhance Bootstrap shadow */
+}
+
+.project-card .card-title {
+    color: var(--custom-dark-blue);
+    font-weight: 600;
+}
+
+.project-card .card-text {
+     color: var(--custom-dark-text);
+     font-size: 0.95rem;
+     line-height: 1.6;
+}
+
+/* Project Card Numbering (Simple Badge Style) */
+.project-card .card-number {
+    position: absolute;
+    top: 10px;
+    left: 15px;
+    background-color: rgba(var(--bs-secondary-rgb), 0.1); /* Use Bootstrap secondary color with alpha */
+    color: var(--bs-secondary);
+    font-size: 0.75rem;
+    font-weight: 600;
+    padding: 0.2em 0.5em;
+    border-radius: 4px;
+    line-height: 1;
     z-index: 1;
 }
 
-
-/* Increase visibility on hover */
-.project-card:hover::before,
-.project-card:hover::after {
-    opacity: 0.15;
-    transform: scale(1.05) rotate(var(--rotate-before, 0deg)); /* Apply existing rotation */
-}
-.project-card:hover::after {
-     transform: scale(1.05) rotate(var(--rotate-after, 0deg));
+/* --- Contact Section --- */
+#contact .btn i {
+    font-size: 1.1em; /* Slightly larger icons */
 }
 
-/* --- Project Specific Decorations --- */
 
-/* Helper variables for rotation */
-.project-blackjack { --rotate-before: -15deg; --rotate-after: 10deg; }
-.project-google-clone { --rotate-before: 15deg; }
-.project-space { --rotate-before: -10deg; --rotate-after: 5deg; }
-.project-people-counter { --rotate-before: -5deg; }
-.project-chrome-extension { --rotate-before: 12deg; } /* Using ::before for bottom */
-.project-js-game { --rotate-before: 15deg; }
-
-/* 9. Blackjack Game */
-.project-blackjack::before {
-    content: '🃏';
-    top: 15px;
-    left: 15px;
-    transform: rotate(var(--rotate-before));
-}
-.project-blackjack::after {
-    content: '⚫⚪🔴'; /* Actual chip emojis */
-    font-family: sans-serif; /* Ensure chips render */
-    font-size: 1.8rem;
-    bottom: 10px;
-    right: 15px;
-    transform: rotate(var(--rotate-after));
-    color: inherit; /* Use text color or specific */
-    letter-spacing: -5px; /* Bunch chips together */
-     opacity: 0.12;
-}
-
-/* 2. Google Clone */
-.project-google-clone::before {
-    content: '🔍';
-    top: 18px;
-    right: 18px;
-     font-size: 2.8rem;
-    transform: rotate(var(--rotate-before));
-}
-.project-google-clone::after { content: none; } /* No second icon */
-
-/* 4. Space Exploration */
-.project-space::before {
-    content: '🪐';
-    top: 15px;
-    left: 15px;
-    transform: rotate(var(--rotate-before));
-     font-size: 3rem;
-}
-.project-space::after {
-    content: '✨';
-    bottom: 12px;
-    right: 18px;
-    font-size: 3rem;
-    transform: rotate(var(--rotate-after));
-     opacity: 0.06;
-}
-
-/* 8. People Counter */
-.project-people-counter::before {
-    content: '👤';
-    top: 18px;
-    left: 18px;
-     font-size: 2.8rem;
-    transform: rotate(var(--rotate-before));
-}
-.project-people-counter::after { content: none; }
-
-/* 10. Chrome Extension */
-/* Using ::before for bottom icon here */
-.project-chrome-extension::before {
-    content: '🧩';
-    bottom: 15px;
-    right: 15px;
-    top: auto; /* Override base */
-    left: auto; /* Override base */
-     font-size: 2.8rem;
-    transform: rotate(var(--rotate-before));
-}
-.project-chrome-extension::after { content: none; }
-
-/* 12. JS Game (Warriors) */
-.project-js-game::before {
-    content: '⚔️';
-    top: 18px;
-    right: 18px;
-     font-size: 2.8rem;
-    transform: rotate(var(--rotate-before));
-}
-.project-js-game::after { content: none; }
-
-/* Add default styles for cards without specific icons */
-.project-personal-website::before { content: '🏠'; top: 18px; left: 18px; font-size: 2.8rem; }
-.project-digital-card::before { content: '💳'; top: 18px; right: 18px; font-size: 2.8rem; }
-.project-birthday::before { content: '🎁'; top: 18px; left: 18px; font-size: 2.8rem; }
-.project-responsive-test::before { content: '📱'; bottom: 15px; right: 15px; top: auto; left: auto; font-size: 2.8rem;}
-.project-portfolio-test::before { content: '📊'; top: 18px; right: 18px; font-size: 2.8rem; }
-.project-login-system::before { content: '🔑'; bottom: 15px; left: 15px; top: auto; right: auto; font-size: 2.8rem; }
-
-/* ================================== */
-/*         Contact Section            */
-/* ================================== */
-#contact {
-    background: var(--primary-color);
-    color: var(--light-bg);
-    padding: 80px 20px;
-    text-align: center;
-    border-radius: var(--border-radius);
-    margin-bottom: 60px;
-}
-
-#contact h2 {
-    color: var(--white-color);
-    margin-bottom: 25px;
-}
-/* Contact section doesn't need a number */
-#contact > .container > h2::before {
-    content: none;
-}
-
-#contact p {
-    margin-bottom: 35px;
-    font-size: 1.15rem;
-    color: var(--light-text);
-    max-width: 650px;
-    margin-left: auto;
-    margin-right: auto;
-    line-height: 1.8;
-}
-
-#contact ul {
-    list-style: none;
-    padding: 0;
-    display: flex; /* Arrange links horizontally */
-    justify-content: center;
-    gap: 30px; /* Space between links */
-    flex-wrap: wrap; /* Wrap if needed */
-}
-
-#contact li {
-    margin-bottom: 0; /* Remove bottom margin as gap handles spacing */
-    font-size: 1.1rem;
-}
-
-#contact a {
-    color: var(--white-color);
-    font-weight: 500; /* Slightly less bold */
-    word-break: break-all;
-    padding: 5px 10px;
-    border-radius: 4px;
-    transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease;
-    display: inline-flex; /* For icon alignment */
-    align-items: center;
-    gap: 8px; /* Space for icon */
-    border: 1px solid transparent; /* Placeholder for hover */
-}
-
-#contact a:hover {
-    background-color: rgba(255, 255, 255, 0.1); /* Subtle hover background */
-    border-color: var(--secondary-color); /* Add border on hover */
-    color: var(--white-color);
-    text-decoration: none;
-}
-
-/* More distinct icons */
-#contact li a[href^="mailto:"]::before {
-    content: '📧';
-    display: inline-block;
-}
-#contact li a[href*="github.com"]::before {
-    content: '💻'; /* Or use a better icon font/SVG */
-    display: inline-block;
-}
-/* Add LinkedIn if you uncomment it */
-/* #contact li a[href*="linkedin.com"]::before {
-    content: '💼';
-    display: inline-block;
-} */
-
-
-/* ================================== */
-/*             Footer                 */
-/* ================================== */
-footer {
-    text-align: center;
-    padding: 35px 20px;
-    margin-top: 0; /* Remove margin top, spacing handled by section margin */
-    color: var(--subtle-text); /* Use subtle text color */
-    background-color: var(--light-bg); /* Match body background */
-    font-size: 0.9rem;
-}
-
-/* ================================== */
-/*       Scroll-to-Top Button         */
-/* ================================== */
+/* --- Scroll-to-Top Button --- */
 .scroll-top-btn {
     position: fixed;
     bottom: 30px;
     right: 30px;
-    background-color: var(--primary-color); /* Match darker elements */
-    color: var(--white-color);
-    border: none;
-    border-radius: var(--border-radius); /* Consistent radius */
-    width: 45px; /* Slightly smaller */
+    width: 45px;
     height: 45px;
-    font-size: 20px;
-    line-height: 45px;
-    text-align: center;
-    cursor: pointer;
+    font-size: 1.1rem; /* Use relative units */
+    border-radius: 50%; /* Make it circular */
+    display: flex; /* Center icon */
+    justify-content: center;
+    align-items: center;
     opacity: 0;
     visibility: hidden;
-    transform: translateY(15px) scale(0.95); /* Start lower and smaller */
-    transition: opacity var(--transition-speed) ease,
-                visibility var(--transition-speed) ease,
-                transform var(--transition-speed) ease,
-                background-color var(--transition-speed-fast) ease;
-    z-index: 999;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    transform: translateY(15px);
+    transition: opacity 0.3s ease, visibility 0.3s ease, transform 0.3s ease, background-color 0.2s ease;
+    z-index: 1050; /* Ensure it's above most elements */
 }
 
 .scroll-top-btn.visible {
-    opacity: 0.8; /* Slightly transparent */
+    opacity: 0.7;
     visibility: visible;
-    transform: translateY(0) scale(1); /* Animate in */
+    transform: translateY(0);
 }
 
 .scroll-top-btn:hover {
-    background-color: var(--secondary-color); /* Use theme color on hover */
-    opacity: 1; /* Fully opaque on hover */
-    transform: translateY(-3px) scale(1.05); /* Lift and slightly enlarge */
+    opacity: 1;
+    /* Bootstrap primary hover color is handled by .btn-primary:hover */
 }
 
-/* ================================== */
-/*       Responsive Design            */
-/* ================================== */
 
-/* Medium devices (tablets, less than 992px) */
+/* --- Responsive Adjustments (Bootstrap handles most) --- */
 @media (max-width: 991.98px) {
-    html {
-        font-size: 15px;
-        scroll-padding-top: calc(var(--header-height-scrolled) + 15px);
-    }
-    .container {
-        max-width: 920px; /* Adjusted */
-        padding: 0 20px;
-    }
-    .about-layout {
-        gap: 40px;
-    }
-    .profile-pic {
-        width: 200px;
-        height: 200px;
-    }
-     section[id] > .container > h2::before {
-        font-size: 0.95rem; /* Adjust number size */
+    /* Adjust title numbering size slightly */
+    h2.section-title::before, h2.section-title-light::before {
+        font-size: 0.95rem;
     }
 }
 
-
-/* Small devices (landscape phones, less than 768px) */
 @media (max-width: 767.98px) {
-    html {
-        font-size: 14px;
-        /* Adjust scroll padding for potentially stacked header */
-        scroll-padding-top: 80px; /* Fixed offset might be simpler here */
+    /* Reduce top padding for titles on smaller screens */
+     h2.section-title, h2.section-title-light {
+        padding-top: 2rem;
+    }
+    h2.section-title::before, h2.section-title-light::before {
+        font-size: 0.9rem;
     }
 
-    header {
-       height: auto;
-       padding: 15px 0; /* More padding when stacked */
-    }
-    /* Remove scrolled height adjustments */
-    header.scrolled {
-        height: auto;
-        box-shadow: 0 1px 5px rgba(0, 0, 0, 0.07);
-    }
-    header.scrolled h1, header.scrolled nav a {
-        font-size: inherit;
-    }
-
-    header .container {
-        flex-direction: column;
-        text-align: center;
-    }
-    header h1 {
-        margin-bottom: 15px; /* More space below title */
-        font-size: 1.7rem;
-    }
-    header nav ul {
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 5px; /* Less space above nav */
-    }
-    header nav li {
-        margin: 5px 12px;
-    }
-    header nav a {
-        font-size: 1rem;
-    }
-
-    h1 { font-size: 2.1rem; }
-    h2 { font-size: 1.9rem; margin-bottom: 1.5em;}
-    h3 { font-size: 1.4rem; }
-
-    section {
-        padding: 60px 0; /* Reduced padding */
-    }
-
-    #about {
-        padding: 50px 0 60px 0;
-    }
-    .about-layout {
-        flex-direction: column;
-        align-items: center; /* Center items when stacked */
-        text-align: center;
-    }
-    .about-text {
-        text-align: left; /* Keep paragraphs left-aligned */
-        max-width: 600px; /* Limit text width */
-        margin: 0 auto; /* Center text block */
-    }
-    .profile-pic {
-         width: 180px;
-         height: 180px;
-         margin-bottom: 30px;
-    }
-
-     section[id] > .container > h2::before {
-        font-size: 0.9rem; /* Adjust number size */
-    }
-     /* Ensure project number is centered */
-     .project-card > span.card-number {
+    /* Center card number on smaller screens if desired */
+    /* .project-card .card-number {
         left: 50%;
         transform: translateX(-50%);
-        top: 15px; /* Adjust position */
-     }
-      .project-card {
-         padding-top: 50px; /* More space for centered number */
-         padding-left: 20px;
-         padding-right: 20px;
-         text-align: center; /* Center card content */
-      }
-       .project-card p {
-         text-align: left; /* Keep paragraph text left-aligned */
-       }
-       .demo-link {
-          align-self: center; /* Center button */
-       }
-
-    .project-grid {
-       grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-       gap: 25px;
     }
-     .project-card {
-        padding: 25px;
-         padding-top: 50px; /* Keep space for number */
-    }
-
-    /* Adjust icon size/position on smaller screens */
-    .project-card::before,
-    .project-card::after {
-        font-size: 2.5rem; /* Smaller icons */
-    }
-    /* Specific adjustments */
-     .project-blackjack::after {
-        font-size: 1.5rem;
-        bottom: 8px;
-        right: 10px;
-    }
-
-    /* Ensure decorations don't clash with centered number */
-    /* Top-positioned ::before icons */
-    .project-card::before {
-         top: 55px; /* Push down below number */
-         /* Adjust left/right if they were centered */
-         /* E.g., .project-google-clone::before { right: 15px; left: auto; } */
-    }
-    /* Bottom-positioned ::after or specific ::before */
-    .project-blackjack::after,
-    .project-space::after,
-    .project-chrome-extension::before, /* Example of bottom ::before */
-    .project-responsive-test::before,
-    .project-login-system::before {
-        /* Reset top, ensure bottom is set */
-        top: auto;
-        bottom: 10px;
-        /* Adjust left/right if needed */
-    }
-
-    #contact {
-        padding: 60px 15px;
-    }
-     #contact ul {
-         gap: 20px;
-     }
-
-    .scroll-top-btn {
-        width: 42px;
-        height: 42px;
-        line-height: 42px;
-        font-size: 18px;
-        bottom: 20px;
-        right: 20px;
-    }
-}
-
-/* Extra small devices (portrait phones, less than 576px) */
-@media (max-width: 575.98px) {
-    html {
-        font-size: 13.5px; /* Slightly larger base for small screens */
-    }
-    body {
-        line-height: 1.65; /* Improve readability */
-    }
-    .container {
-        padding: 0 15px; /* Less padding */
-    }
-
-    h1 { font-size: 1.9rem; }
-    h2 { font-size: 1.7rem; margin-bottom: 1.2em; }
-    h3 { font-size: 1.3rem; }
-
-    header nav li {
-        margin: 5px 8px;
-    }
-
-    section {
-        padding: 50px 0; /* Further reduced padding */
-    }
-
-    #about {
-        padding: 40px 0 50px 0;
-    }
-     .profile-pic {
-         width: 150px;
-         height: 150px;
-    }
-    .about-content p {
-        font-size: 1rem;
-    }
-     .about-content strong, .about-content .skill-highlight {
-         line-height: 1.6; /* Adjust for smaller font */
-         padding: 0.1em 0.3em;
-     }
-
-    .project-grid {
-       grid-template-columns: 1fr;
-       gap: 20px;
-    }
-    .project-card {
-        padding: 20px;
-        padding-top: 45px; /* Space for number */
-    }
-     .demo-link {
-        padding: 8px 0;
-        font-size: 0.85rem;
-    }
-     /* Even smaller icons */
-     .project-card::before,
-    .project-card::after {
-        font-size: 2.2rem;
-    }
-     .project-blackjack::after {
-        font-size: 1.3rem;
-    }
-     /* Ensure top icons are still clear of number */
-    .project-card::before {
-         top: 50px;
-    }
-     /* Ensure bottom icons are still clear of button */
-     .project-blackjack::after,
-     .project-space::after,
-     .project-chrome-extension::before,
-     .project-responsive-test::before,
-     .project-login-system::before {
-         bottom: 8px;
-     }
-
-    #contact {
-        padding: 50px 10px;
-    }
-    #contact p, #contact li {
-        font-size: 1rem;
-    }
-    #contact ul {
-         gap: 15px;
-     }
-     #contact a {
-         padding: 4px 8px;
-         gap: 6px;
-     }
-
-    footer {
-        padding: 30px 10px;
-        font-size: 0.85rem;
-    }
-
-    .scroll-top-btn {
-        width: 40px;
-        height: 40px;
-        line-height: 40px;
-        font-size: 16px;
-        bottom: 15px;
-        right: 15px;
-    }
+    .project-card .card-title {
+        margin-top: 2rem; Center title if number is centered
+    } */
 }
