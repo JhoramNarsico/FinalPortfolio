@@ -264,24 +264,37 @@ section h2::after {
 /*     Section Transition Effects     */
 /* ================================== */
 
+/* Default state for all sections before specific odd/even logic */
 main section[id] {
     opacity: 0;
-    transform: translateY(150px);
-    transition: opacity 0.8s cubic-bezier(0.165, 0.84, 0.44, 1),
-                transform 1s cubic-bezier(0.23, 1, 0.32, 1);
+    transition: opacity 0.7s cubic-bezier(0.165, 0.84, 0.44, 1), /* Adjusted duration */
+                transform 0.8s cubic-bezier(0.23, 1, 0.32, 1);   /* Adjusted duration */
     will-change: opacity, transform;
 }
 
-main section[id].section-is-visible {
+/* Odd sections slide up */
+main section[id]:nth-child(odd) {
+    transform: translateY(60px); /* Adjusted intensity */
+}
+main section[id]:nth-child(odd).section-is-visible {
     opacity: 1;
     transform: translateY(0);
+}
+
+/* Even sections slide in from the left */
+main section[id]:nth-child(even) {
+    transform: translateX(-60px); /* New: slide from left */
+}
+main section[id]:nth-child(even).section-is-visible {
+    opacity: 1;
+    transform: translateX(0);
 }
 
 
 /* ================================== */
 /*        Hero / About Section (Enhanced) */
 /* ================================== */
-#about {
+#about { /* This is section:nth-child(1), so it's an "odd" section */
     position: relative;
     overflow: hidden;
 }
@@ -464,11 +477,57 @@ strong,
     line-height: 1.5;
 }
 
+/* Staggered child animations for #about section */
+/* Initial state for children of #about. These apply BEFORE #about gets .section-is-visible. */
+#about .about-image,
+#about .about-text > .about-intro,
+/* HTML structure: <p class="about-intro">, then <p> (ever-evolving), then <key-skills>, then <p> (my goal) */
+#about .about-text > p:nth-of-type(2), /* This is the "ever-evolving" paragraph */
+#about .about-text > p:nth-of-type(3), /* This is the "my goal" paragraph */
+#about .key-skills {
+    opacity: 0;
+    transform: translateY(30px); /* Children also slide up a bit */
+    will-change: opacity, transform; /* Important for performance on animated children */
+    /* Transitions are defined when .section-is-visible is added to #about, to include delays */
+}
+
+/* When #about becomes visible, trigger animations for its children with delays */
+#about.section-is-visible .about-image {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.2s,
+                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.2s; /* Delay 0.2s */
+}
+#about.section-is-visible .about-text > .about-intro {
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.3s,
+                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.3s; /* Delay 0.3s */
+}
+#about.section-is-visible .about-text > p:nth-of-type(2) { /* "ever-evolving" paragraph */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.4s,
+                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.4s; /* Delay 0.4s */
+}
+#about.section-is-visible .key-skills { /* Key skills animates after the first main paragraph */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.5s,
+                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.5s; /* Delay 0.5s */
+}
+#about.section-is-visible .about-text > p:nth-of-type(3) { /* "my goal" paragraph, after key-skills */
+    opacity: 1;
+    transform: translateY(0);
+    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.6s,
+                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.6s; /* Delay 0.6s */
+}
+
 
 /* ================================== */
 /*         Project Section            */
 /* ================================== */
-#projects {
+#projects { /* This is section:nth-child(2), so it's an "even" section */
      padding-top: 80px;
      padding-bottom: 60px;
 }
@@ -527,12 +586,11 @@ strong,
     border: 1px solid transparent;
     opacity: 0;
     transform: translateY(20px);
+    /* UPDATED TRANSITION: changed easing for opacity/transform, corrected delay application */
     transition: background-color var(--transition-speed-fast) ease,
                 border-color var(--transition-speed-fast) ease,
-                transform var(--transition-speed-fast) ease,
-                opacity 0.5s ease-out,
-                transform 0.5s ease-out,
-                transition-delay var(--card-delay, 0.3s);
+                opacity 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) var(--card-delay, 0.3s),
+                transform 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) var(--card-delay, 0.3s);
     will-change: opacity, transform;
     overflow: hidden;
     position: relative;
@@ -737,20 +795,10 @@ strong,
     margin-left: auto;
     margin-right: auto;
     max-width: 95%;
-    transition: background-color var(--transition-speed) ease,
-                border-color var(--transition-speed) ease,
-                border-left-color var(--transition-speed) ease,
-                box-shadow var(--transition-speed) ease,
-                transform var(--transition-speed) ease,
-                opacity 0.5s ease-out,
-                transform 0.5s ease-out,
-                transition-delay var(--card-delay, 0.3s);
+    /* Transition property from parent .project-item will apply here too, including the var(--card-delay) */
 }
 
-.final-project-showcase .project-item.project-js-game.is-visible {
-     opacity: 1;
-     transform: translateY(0);
-}
+/* .final-project-showcase .project-item.project-js-game.is-visible {} is inherited */
 
 
 .final-project-showcase .project-item.project-js-game:hover {
@@ -758,7 +806,7 @@ strong,
     border-left-color: var(--accent-color);
     border-color: var(--secondary-color);
     box-shadow: var(--card-hover-shadow);
-    transform: translateY(-5px) scale(1.01);
+    transform: translateY(-5px) scale(1.01); /* Ensure this transform doesn't conflict with entrance */
 }
 
 .final-project-showcase .project-item.project-js-game::after {
@@ -802,7 +850,7 @@ strong,
 /* ================================== */
 /*         Contact Section            */
 /* ================================== */
-#contact {
+#contact { /* This is section:nth-child(3), so it's an "odd" section */
     background: var(--primary-color);
     color: var(--light-bg);
     text-align: center;
@@ -1005,9 +1053,10 @@ footer {
         padding: 80px 0;
         margin-bottom: 60px;
     }
-    main section[id] {
-         transform: translateY(120px);
-    }
+    /* Adjusted transform for responsive */
+    main section[id]:nth-child(odd) { transform: translateY(50px); }
+    main section[id]:nth-child(even) { transform: translateX(-50px); }
+
     .about-layout {
         gap: 40px;
     }
@@ -1073,10 +1122,10 @@ footer {
         padding: 60px 0;
         margin-bottom: 50px;
     }
-     main section[id] {
-         transform: translateY(100px);
-         transition-duration: 0.7s, 0.9s;
-     }
+    /* Adjusted transform for responsive */
+    main section[id]:nth-child(odd) { transform: translateY(40px); transition-duration: 0.6s, 0.7s; }
+    main section[id]:nth-child(even) { transform: translateX(-40px); transition-duration: 0.6s, 0.7s; }
+
     #about::before {
         width: 80%;
         height: 70%;
@@ -1199,10 +1248,10 @@ footer {
         padding: 50px 0;
         margin-bottom: 40px;
     }
-     main section[id] {
-         transform: translateY(80px);
-         transition-duration: 0.6s, 0.8s;
-     }
+    /* Adjusted transform for responsive */
+    main section[id]:nth-child(odd) { transform: translateY(30px); transition-duration: 0.5s, 0.6s; }
+    main section[id]:nth-child(even) { transform: translateX(-30px); transition-duration: 0.5s, 0.6s; }
+
      #about::before {
         width: 90%;
         height: 60%;
@@ -1228,6 +1277,15 @@ footer {
      .about-text p {
         font-size: 1rem;
     }
+    /* Staggered child animations for #about - smaller transform on mobile */
+    #about .about-image,
+    #about .about-text > .about-intro,
+    #about .about-text > p:nth-of-type(2),
+    #about .about-text > p:nth-of-type(3),
+    #about .key-skills {
+        transform: translateY(20px);
+    }
+
     .key-skills {
         padding: 15px 15px 15px 20px;
     }

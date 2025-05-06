@@ -179,8 +179,8 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('IntersectionObserver' in window && sections.length > 0) {
         const sectionObserverOptions = {
             root: null,
-            // Trigger when the section is about 20-25% from the bottom edge. Adjust as needed.
-            rootMargin: '0px 0px -25% 0px',
+            // Trigger when the section is about 15% from the bottom edge. (Was -25%)
+            rootMargin: '0px 0px -15% 0px',
             threshold: 0 // Trigger as soon as it crosses the margin boundary
         };
 
@@ -214,8 +214,8 @@ document.addEventListener('DOMContentLoaded', () => {
         sections.forEach(section => {
             const rect = section.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            // Check if section top is within the trigger zone from the bottom
-            if (rect.top < viewportHeight * (1 - 0.25)) { // Match the rootMargin percentage (1 - 0.25 = 0.75)
+            // Check if section top is within the trigger zone from the bottom (match rootMargin: 1 - 0.15 = 0.85)
+            if (rect.top < viewportHeight * (1 - 0.15)) {
                  // Check if section bottom is below the top of the viewport (i.e., some part is visible)
                 if (rect.bottom > 0) {
                      section.classList.add('section-is-visible');
