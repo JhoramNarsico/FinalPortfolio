@@ -111,6 +111,11 @@ section[id] > .container > h2::before {
     margin-bottom: 10px;
     text-align: center;
 }
+/* Remove numbering from About Me H2 specifically */
+#about > .container > .about-content > h2::before {
+    content: none;
+    display: none;
+}
 
 
 h3 { font-size: 1.5rem; margin-bottom: 1.5em; }
@@ -210,86 +215,6 @@ header.scrolled nav a {
      font-size: 0.9rem;
 }
 
-
-/* ================================== */
-/*        Hero / About Section        */
-/* ================================== */
-#about {
-    /* Removed transition properties from here, handled globally now */
-    /* Removed background, padding, margin, border-radius, box-shadow - use general section styles */
-    text-align: center;
-}
-
-.about-content {
-    max-width: 900px;
-    margin: 0 auto;
-    padding: 0 20px;
-}
-
-#about h2 { /* Target h2 specifically if needed, but general h2 styling applies */
-    margin-bottom: 40px;
-    font-size: 2.2rem;
-}
-
-.about-layout {
-    display: flex;
-    align-items: flex-start;
-    gap: 50px;
-    text-align: left;
-}
-
-.about-text {
-    flex: 2;
-}
-
-.about-image {
-     flex: 1;
-     max-width: 280px;
-     text-align: center;
-     margin-top: 10px;
-}
-
-
-.profile-pic {
-    width: 220px;
-    height: 220px;
-    border-radius: var(--border-radius);
-    border: 4px solid var(--white-color);
-    /* Slightly stronger shadow */
-    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.1);
-    object-fit: cover;
-    display: block;
-    margin: 0 auto;
-    transition: transform var(--transition-speed) ease,
-                box-shadow var(--transition-speed) ease;
-}
-
-.profile-pic:hover {
-    transform: translateY(-5px) scale(1.03);
-    /* Slightly stronger hover shadow */
-    box-shadow: 0 10px 25px rgba(31, 58, 90, 0.15); /* Using new primary color base */
-}
-
-.about-content p {
-    margin-bottom: 18px;
-    font-size: 1.05rem;
-    color: var(--dark-text); /* Using updated dark text */
-    line-height: 1.8;
-}
-
-/* Skill Highlighting */
-.about-content strong,
-.about-content .skill-highlight {
-    font-weight: 600;
-    color: var(--primary-color); /* Use updated primary */
-    background-color: var(--highlight-bg); /* Use updated highlight */
-    padding: 0.1em 0.4em;
-    border-radius: 4px;
-    margin: 0 0.1em;
-    display: inline-block;
-    line-height: 1.5;
-}
-
 /* ================================== */
 /*     Sections General Styling       */
 /* ================================== */
@@ -304,7 +229,6 @@ section {
 section h2::after {
     display: none; /* Ensure no default underlines conflict */
 }
-
 
 /* ================================== */
 /*     Section Transition Effects     */
@@ -321,6 +245,186 @@ main section[id] {
 main section[id].section-is-visible {
     opacity: 1; /* Fade in */
     transform: translateY(0); /* Slide up to original position */
+}
+
+
+/* ================================== */
+/*        Hero / About Section (Enhanced) */
+/* ================================== */
+#about {
+    /* Ensure it uses the general section padding/margin */
+    /* background: transparent; */ /* Keep transparent if using body gradient */
+    position: relative; /* Needed for pseudo-elements */
+    overflow: hidden; /* Contain pseudo-elements */
+}
+
+/* Add a subtle background shape/panel */
+#about::before {
+    content: '';
+    position: absolute;
+    top: 10%; /* Adjust position */
+    left: -5%; /* Adjust position */
+    width: 60%; /* Adjust size */
+    height: 80%; /* Adjust size */
+    background: linear-gradient(135deg, hsla(210, 40%, 95%, 0.5), hsla(210, 40%, 90%, 0.5)); /* Soft gradient */
+    border-radius: 30% 70% 70% 30% / 30% 30% 70% 70%; /* Organic blob shape */
+    z-index: -1; /* Place behind content */
+    opacity: 0.6; /* Make it subtle */
+    transform: rotate(-15deg); /* Angle it slightly */
+    /* Don't animate this directly, let it fade in with the section */
+}
+
+
+.about-content { /* Wrapper inside #about container */
+    max-width: 900px;
+    margin: 0 auto;
+    padding: 30px 20px; /* Add some padding inside the content area */
+    background-color: rgba(255, 255, 255, 0.6); /* Semi-transparent white background */
+    border-radius: var(--border-radius);
+    box-shadow: 0 5px 25px rgba(0, 0, 0, 0.05); /* Soft shadow for the content box */
+    position: relative; /* Ensure content is above pseudo-elements */
+    z-index: 1;
+    backdrop-filter: blur(5px); /* Optional: Frosted glass effect */
+    -webkit-backdrop-filter: blur(5px); /* Safari support */
+}
+
+#about h2 { /* Target h2 specifically */
+    margin-bottom: 40px;
+    font-size: 2.2rem;
+    text-align: center; /* Center heading within the content box */
+}
+
+.about-layout {
+    display: flex;
+    align-items: flex-start; /* Align items to the top */
+    gap: 50px;
+    text-align: left; /* Reset text alignment for layout children */
+}
+
+.about-text {
+    flex: 2;
+}
+
+/* Style the introductory paragraph */
+.about-intro {
+    font-size: 1.15rem; /* Slightly larger */
+    font-weight: 400;
+    color: var(--primary-color); /* Use primary color */
+    margin-bottom: 25px; /* More space after intro */
+    line-height: 1.7;
+}
+.about-intro strong { /* Style strong tags specifically within the intro */
+    font-weight: 600; /* Ensure strong tags are still bold */
+    color: inherit; /* Inherit color from .about-intro */
+    background-color: transparent; /* Remove default highlight background */
+    padding: 0;
+    margin: 0;
+    border-radius: 0;
+    display: inline; /* Reset display */
+}
+
+.about-text p { /* Style for subsequent paragraphs */
+    margin-bottom: 18px;
+    font-size: 1.05rem;
+    color: var(--dark-text);
+    line-height: 1.8;
+}
+
+.about-image {
+     flex: 1;
+     max-width: 280px;
+     text-align: center;
+     margin-top: 10px; /* Keep vertical alignment */
+     position: relative; /* For decorative element */
+}
+
+/* Add a subtle decorative line near the image */
+.about-image::after {
+    content: '';
+    position: absolute;
+    bottom: -15px; /* Position below the image container */
+    left: 50%;
+    transform: translateX(-50%);
+    width: 60%; /* Adjust width */
+    height: 4px; /* Thickness */
+    background-color: var(--secondary-color); /* Use secondary color */
+    border-radius: 2px;
+    opacity: 0.7;
+}
+
+
+.profile-pic {
+    width: 220px;
+    height: 220px;
+    border-radius: 50%; /* Make it circular */
+    border: 5px solid var(--white-color); /* Thicker white border */
+    box-shadow: 0 8px 25px rgba(31, 58, 90, 0.15); /* Slightly adjusted shadow */
+    object-fit: cover;
+    display: block;
+    margin: 0 auto;
+    transition: transform var(--transition-speed) ease,
+                box-shadow var(--transition-speed) ease;
+}
+
+.profile-pic:hover {
+    transform: translateY(-5px) scale(1.05); /* Slightly more scale */
+    box-shadow: 0 12px 30px rgba(31, 58, 90, 0.2); /* Stronger hover shadow */
+}
+
+/* --- Key Skills Styling --- */
+.key-skills {
+    margin: 30px 0 25px 0; /* Spacing around the skills block */
+    padding: 20px;
+    background-color: rgba(41, 128, 185, 0.05); /* Very subtle background */
+    border-left: 4px solid var(--secondary-color);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+}
+
+.key-skills h4 {
+    font-size: 1.1rem;
+    color: var(--primary-color);
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+
+.key-skills ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.key-skills li {
+    margin-bottom: 10px;
+    font-size: 0.95rem; /* Slightly smaller text for list items */
+    color: var(--dark-text);
+    display: flex; /* Align icon and text */
+    align-items: center;
+    gap: 10px; /* Space between icon and text */
+}
+
+.key-skills li:last-child {
+    margin-bottom: 0;
+}
+
+.skill-icon {
+    display: inline-block;
+    /* font-size: 1.1rem; */ /* Adjust if using emojis */
+    color: var(--secondary-color); /* Color the icon */
+    /* width: 20px; */ /* Set fixed width if needed */
+    text-align: center;
+}
+
+/* General Skill Highlighting (if used outside intro) */
+strong,
+.skill-highlight {
+    font-weight: 600;
+    color: var(--primary-color);
+    background-color: var(--highlight-bg);
+    padding: 0.1em 0.4em;
+    border-radius: 4px;
+    margin: 0 0.1em;
+    display: inline-block;
+    line-height: 1.5;
 }
 
 
@@ -383,9 +487,9 @@ main section[id].section-is-visible {
     transition: background-color var(--transition-speed-fast) ease,
                 border-color var(--transition-speed-fast) ease,
                 transform var(--transition-speed-fast) ease, /* Hover transform */
-                opacity 0.5s ease-out 0.3s, /* Fade-in opacity, DELAYED */
-                transform 0.5s ease-out 0.3s, /* Slide-up transform, DELAYED */
-                transition-delay var(--card-delay, 0.3s); /* Staggering delay, applies AFTER base 0.3s delay */
+                opacity 0.5s ease-out, /* Fade-in opacity, delay managed by JS */
+                transform 0.5s ease-out, /* Slide-up transform, delay managed by JS */
+                transition-delay var(--card-delay, 0.3s); /* Staggering delay (base delay + stagger) */
     will-change: opacity, transform; /* Performance hint */
     overflow: hidden;
     position: relative;
@@ -400,8 +504,6 @@ main section[id].section-is-visible {
 
 .project-item:hover {
     background-color: var(--highlight-bg); /* Use updated highlight */
-    /* Optional: Slightly lift on hover - separate transition property */
-    /* transform: translateY(-3px); */
 }
 
 /* Timeline/Date column */
@@ -603,8 +705,8 @@ main section[id].section-is-visible {
                 border-left-color var(--transition-speed) ease, /* Added transition */
                 box-shadow var(--transition-speed) ease,
                 transform var(--transition-speed) ease,
-                opacity 0.5s ease-out 0.3s, /* Keep visibility transition (delayed) */
-                transform 0.5s ease-out 0.3s, /* Keep visibility transition (delayed) */
+                opacity 0.5s ease-out, /* Keep visibility transition (delay managed by JS) */
+                transform 0.5s ease-out, /* Keep visibility transition (delay managed by JS) */
                 transition-delay var(--card-delay, 0.3s); /* Keep delay */
 }
 
@@ -808,6 +910,12 @@ footer {
         padding: 80px 0; /* Slightly reduce section padding */
         margin-bottom: 60px; /* Slightly reduce margin */
     }
+     /* Section transitions might feel too large, reduce translate */
+    main section[id] {
+         transform: translateY(120px);
+    }
+
+     /* About Me Responsive */
     .about-layout {
         gap: 40px;
     }
@@ -820,10 +928,6 @@ footer {
     }
     .project-timeline {
         flex-basis: 90px;
-    }
-    /* Section transitions might feel too large, reduce translate */
-    main section[id] {
-         transform: translateY(120px);
     }
 }
 
@@ -884,23 +988,57 @@ footer {
         margin-bottom: 50px; /* Further reduce margin */
     }
 
-    #about {
-        /* padding handled by general section */
+    /* Reduce section transition intensity */
+     main section[id] {
+         transform: translateY(100px);
+         transition-duration: 0.7s, 0.9s; /* Slightly faster */
+     }
+
+    /* About Me Responsive */
+    #about::before { /* Make background shape smaller/less prominent */
+        width: 80%;
+        height: 70%;
+        top: 5%;
+        left: -10%;
+        opacity: 0.4;
     }
+     .about-content {
+         padding: 25px 15px; /* Adjust padding */
+     }
     .about-layout {
         flex-direction: column;
-        align-items: center;
-        text-align: center;
+        align-items: center; /* Center items when stacked */
+        text-align: center; /* Center text in the main block */
+        gap: 40px; /* Adjust gap */
     }
     .about-text {
-        text-align: left;
+        text-align: left; /* Keep paragraph text left-aligned */
         max-width: 600px;
         margin: 0 auto;
     }
+     .about-intro {
+        font-size: 1.1rem;
+        text-align: center; /* Center intro when stacked */
+    }
     .profile-pic {
-         width: 180px;
+         width: 180px; /* Keep size adjustments */
          height: 180px;
-         margin-bottom: 30px;
+    }
+    .about-image::after { /* Adjust decorative line position/size */
+        width: 50%;
+        bottom: -10px;
+    }
+    .key-skills {
+        margin-left: auto; /* Center the block slightly */
+        margin-right: auto;
+        max-width: 90%;
+        padding: 15px; /* Adjust padding */
+    }
+    .key-skills h4 {
+        font-size: 1.05rem;
+    }
+    .key-skills li {
+        font-size: 0.9rem;
     }
 
      section[id] > .container > h2::before {
@@ -967,12 +1105,6 @@ footer {
         bottom: 20px;
         right: 20px;
     }
-
-    /* Reduce section transition intensity */
-     main section[id] {
-         transform: translateY(100px);
-         transition-duration: 0.7s, 0.9s; /* Slightly faster */
-     }
 }
 
 /* Extra small devices (portrait phones, less than 576px) */
@@ -1000,20 +1132,49 @@ footer {
         margin-bottom: 40px; /* Further reduce margin */
     }
 
-    #about {
-         /* padding handled by general section */
+     /* Further reduce section transition intensity */
+     main section[id] {
+         transform: translateY(80px);
+         transition-duration: 0.6s, 0.8s; /* Even faster */
+     }
+
+    /* About Me Responsive */
+     #about::before { /* Even more subtle */
+        width: 90%;
+        height: 60%;
+        top: 3%;
+        left: -15%;
+        opacity: 0.3;
+        filter: blur(2px); /* Add blur on small screens */
+     }
+    .about-content {
+         padding: 20px 15px;
+         backdrop-filter: blur(3px);
+        -webkit-backdrop-filter: blur(3px);
     }
      .profile-pic {
          width: 150px;
          height: 150px;
+         border-width: 4px;
     }
-    .about-content p {
+     .about-intro {
+        font-size: 1.05rem;
+    }
+     .about-text p { /* Subsequent paras */
         font-size: 1rem;
     }
-     .about-content strong, .about-content .skill-highlight {
-         line-height: 1.6;
-         padding: 0.1em 0.3em;
+    .key-skills {
+        padding: 15px 15px 15px 20px; /* Adjust padding */
+    }
+     .key-skills li {
+        font-size: 0.9rem;
+        gap: 8px;
+    }
+     .about-image::after {
+         height: 3px;
+         bottom: -8px;
      }
+
 
     .project-item {
         padding: 15px;
@@ -1040,10 +1201,6 @@ footer {
 
     /* Adjusted project icons for small screens */
     .project-item::after {
-        /* Option 1: Hide */
-        /* display: none; */
-
-        /* Option 2: Smaller/Subtler */
         font-size: 2.2rem; /* Smaller size */
         opacity: 0.08;    /* Less initial opacity */
         bottom: 8px;
@@ -1119,10 +1276,4 @@ footer {
         bottom: 15px;
         right: 15px;
     }
-
-     /* Further reduce section transition intensity */
-     main section[id] {
-         transform: translateY(80px);
-         transition-duration: 0.6s, 0.8s; /* Even faster */
-     }
 }
