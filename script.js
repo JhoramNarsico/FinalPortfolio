@@ -6,7 +6,11 @@ document.addEventListener('DOMContentLoaded', () => {
     const sections = document.querySelectorAll('main section[id]');
     const navLinks = document.querySelectorAll('header nav a');
     const scrollTopBtn = document.getElementById('scrollTopBtn');
-    const projectItems = document.querySelectorAll('.project-item'); // Cache projects early
+    const projectItems = document.querySelectorAll('.project-item');
+
+    // NEW: Cache the showcase highlight block
+    const highlightBlock = document.querySelector('.showcase-highlight-block');
+
 
     // --- Debounce Function (Helper for scroll/resize events) ---
     function debounce(func, wait = 15, immediate = false) {
@@ -28,28 +32,22 @@ document.addEventListener('DOMContentLoaded', () => {
     const highlightNavLink = () => {
         let currentSectionId = '';
         const scrollPosition = window.scrollY;
-        // Dynamically get header height + buffer INSIDE the function for accuracy
         const adjustedHeaderOffset = (header ? header.offsetHeight : 70) + 30;
 
         sections.forEach(section => {
-            // Check if the section is actually visible before calculating offsets
-            // This helps if sections start invisible due to animations
+            // Consider only sections that are meant to be visible or are already visible
             if (section.classList.contains('section-is-visible') || getComputedStyle(section).opacity !== '0') {
                 const sectionTop = section.offsetTop - adjustedHeaderOffset;
                 const sectionBottom = sectionTop + section.offsetHeight;
-
-                // Check if scroll position is within the section's bounds
                 if (scrollPosition >= sectionTop && scrollPosition < sectionBottom) {
                     currentSectionId = section.getAttribute('id');
                 }
             }
         });
 
-         // If no section is actively matched (e.g., in space between sections, or near top/bottom),
-         // try a simpler check: find the last visible section whose top is above the current scroll position.
+         // Fallback: If no section is perfectly matched, find the last visible one from top
          if (!currentSectionId && sections.length > 0) {
             for (let i = sections.length - 1; i >= 0; i--) {
-                // Check visibility again here
                  if ((sections[i].classList.contains('section-is-visible') || getComputedStyle(sections[i]).opacity !== '0') &&
                      scrollPosition >= sections[i].offsetTop - adjustedHeaderOffset) {
                     currentSectionId = sections[i].getAttribute('id');
@@ -58,16 +56,16 @@ document.addEventListener('DOMContentLoaded', () => {
             }
          }
 
-        // Handle edge case: Scrolled near the very bottom of the page
-         if ((window.innerHeight + scrollPosition) >= document.body.offsetHeight - 50 && sections.length > 0) {
+         // Edge case: If scrolled to the very bottom of the page
+        if ((window.innerHeight + scrollPosition) >= document.body.offsetHeight - 50 && sections.length > 0) { // 50px buffer
             currentSectionId = sections[sections.length - 1].getAttribute('id');
         }
-        // Handle edge case: Scrolled near the very top
+        // Edge case: If scrolled above the first section (e.g., top of page)
         else if (sections.length > 0 && scrollPosition < sections[0].offsetTop - adjustedHeaderOffset) {
-             currentSectionId = sections[0].getAttribute('id'); // Default to first section
+             currentSectionId = sections[0].getAttribute('id'); // Or set to empty if you prefer no active link
         }
 
-        // Update active class on nav links
+
         navLinks.forEach(link => {
             link.classList.remove('active');
             if (link.getAttribute('href') === `#${currentSectionId}`) {
@@ -78,15 +76,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Feature 2: Header Transformation on Scroll ---
     const handleHeaderScroll = () => {
-        if (!header) return; // Exit if header doesn't exist
-
-        // Disable shrinking on smaller screens where layout changes (header becomes static)
+        if (!header) return;
         if (window.matchMedia("(max-width: 767.98px)").matches) {
-             header.classList.remove('scrolled'); // Ensure class is removed if screen resized
+             header.classList.remove('scrolled'); // Ensure it's not scrolled on mobile if header is static
              return;
         }
-
-        // Add 'scrolled' class after scrolling 50px
         if (window.scrollY > 50) {
             header.classList.add('scrolled');
         } else {
@@ -96,8 +90,7 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Feature 3: Scroll-to-Top Button Visibility ---
     const handleScrollTopBtn = () => {
-        if (!scrollTopBtn) return; // Exit if button doesn't exist
-        // Show button after scrolling 300px
+        if (!scrollTopBtn) return;
         if (window.scrollY > 300) {
             scrollTopBtn.classList.add('visible');
         } else {
@@ -110,66 +103,49 @@ document.addEventListener('DOMContentLoaded', () => {
         highlightNavLink();
         handleHeaderScroll();
         handleScrollTopBtn();
-    }, 15); // Run checks no more than roughly every 15ms
+    }, 15);
 
     // --- Add Event Listeners ---
     window.addEventListener('scroll', onScroll);
     window.addEventListener('resize', debounce(() => {
-        handleHeaderScroll();
-        // Optionally re-check nav highlighting on resize if layout changes drastically
-        // highlightNavLink();
+        handleHeaderScroll(); // Re-check header state on resize (e.g., moving from desktop to mobile view)
     }, 50));
 
     // Initial calls on page load
-    handleHeaderScroll(); // Set initial header state
-    handleScrollTopBtn(); // Set initial button state
-    // highlightNavLink(); // Call highlight initially, but section visibility might affect it
-    // Note: The section observer below will handle initial section visibility
+    handleHeaderScroll();
+    handleScrollTopBtn();
 
 
     // --- Feature 4: Staggered Fade-in Animation for Project Items ---
     if ('IntersectionObserver' in window && projectItems.length > 0) {
         const projectObserverOptions = {
             root: null,
-            rootMargin: '0px 0px -80px 0px', // Trigger when item is about 80px from bottom edge
-            threshold: 0.1 // Need at least 10% visible
+            rootMargin: '0px 0px -80px 0px', // Start loading a bit before fully in view
+            threshold: 0.1 // 10% of item visible
         };
-
-        let itemIndex = 0; // Keep track of index for staggering
-        const processedItems = new WeakSet(); // Track processed items
+        let itemIndex = 0; // For staggering
+        const processedItems = new WeakSet(); // To ensure animation only runs once per item
 
         const projectObserverCallback = (entries, observer) => {
             entries.forEach((entry) => {
-                // Check if item hasn't been processed and is intersecting
                 if (entry.isIntersecting && !processedItems.has(entry.target)) {
-                    // Calculate delay based on the overall index
-                    // Base delay is already set in CSS (0.3s), this adds staggering on top
-                    const staggerDelay = itemIndex * 100; // 100ms delay between items
-                    entry.target.style.setProperty('--card-delay', `${0.3 + staggerDelay / 1000}s`); // Add stagger to base delay
-
+                    const staggerDelay = itemIndex * 100; // 100ms stagger
+                    entry.target.style.setProperty('--card-delay', `${0.3 + staggerDelay / 1000}s`);
                     entry.target.classList.add('is-visible');
-
-                    processedItems.add(entry.target); // Mark item as processed
-                    itemIndex++; // Increment index for the next item
-
-                    // Don't unobserve here if we want hover effects etc. to remain
-                    // observer.unobserve(entry.target); // Optional: Stop observing once animated
+                    processedItems.add(entry.target); // Mark as processed
+                    itemIndex++;
+                    // No need to unobserve, as WeakSet handles re-triggering
                 }
-                // No 'else' needed if we only want the animation once on scroll-in
             });
         };
-
         const projectObserver = new IntersectionObserver(projectObserverCallback, projectObserverOptions);
-
         projectItems.forEach(item => {
             projectObserver.observe(item);
         });
-
     } else {
-        // Fallback for older browsers or if no items exist
         console.warn("Intersection Observer not supported for project items or no items found. Showing all items immediately.");
         projectItems.forEach(item => {
-            item.style.setProperty('--card-delay', '0.3s'); // Apply base delay
+            item.style.setProperty('--card-delay', '0.3s');
             item.classList.add('is-visible');
         });
     }
@@ -179,73 +155,77 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('IntersectionObserver' in window && sections.length > 0) {
         const sectionObserverOptions = {
             root: null,
-            // Trigger when the section is about 15% from the bottom edge. (Was -25%)
-            rootMargin: '0px 0px -15% 0px',
-            threshold: 0 // Trigger as soon as it crosses the margin boundary
+            rootMargin: '0px 0px -15% 0px', // Trigger when bottom 15% of viewport is approached
+            threshold: 0 // Trigger as soon as it enters the margin
         };
-
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
-                    // Section is entering the detection zone
                     entry.target.classList.add('section-is-visible');
-                    // Re-run nav highlight when a section becomes visible
-                    // Use debounce to avoid running too often if multiple sections trigger quickly
-                    debounce(highlightNavLink, 50)();
-                    // Optional: Unobserve if you only want the animation once per page load
-                    // observer.unobserve(entry.target);
-                } else {
-                    // Section is leaving the detection zone
-                    // Optional: Remove class to reset animation if user scrolls back up
-                    // Be careful: this might feel janky if sections are close together
-                    // entry.target.classList.remove('section-is-visible');
+                    debounce(highlightNavLink, 50)(); // Update nav link when section becomes visible
                 }
+                 // Optional: else { entry.target.classList.remove('section-is-visible'); } // If you want animations on re-scroll out of view
             });
         };
-
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
-
         sections.forEach(section => {
             sectionObserver.observe(section);
         });
 
-        // Initial check for sections already in view on load (e.g., #about)
-        // This is important because the scroll event won't fire initially
+        // Initial check for sections already in view on load to prevent FOUC
         sections.forEach(section => {
             const rect = section.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            // Check if section top is within the trigger zone from the bottom (match rootMargin: 1 - 0.15 = 0.85)
-            if (rect.top < viewportHeight * (1 - 0.15)) {
-                 // Check if section bottom is below the top of the viewport (i.e., some part is visible)
-                if (rect.bottom > 0) {
+            if (rect.top < viewportHeight * (1 - 0.15)) { // -15% from bottom
+                if (rect.bottom > 0) { // Section bottom is below viewport top
                      section.classList.add('section-is-visible');
                 }
             }
         });
-         // Call highlightNavLink AFTER the initial section visibility check
-         highlightNavLink();
-
+         highlightNavLink(); // Initial call after forced visibility checks
     } else {
-        // Fallback for older browsers or if no sections found
         console.warn("Intersection Observer not supported for sections or no sections found. Showing all sections immediately.");
         sections.forEach(section => {
-            section.classList.add('section-is-visible'); // Make them visible directly
+            section.classList.add('section-is-visible');
         });
-        highlightNavLink(); // Highlight nav based on initially visible sections
+        highlightNavLink();
     }
-    // --- End of Section Entrance Animation ---
 
 
     // --- Feature 5: Scroll-to-Top Button Click Handler ---
     if (scrollTopBtn) {
         scrollTopBtn.addEventListener('click', (e) => {
-            e.preventDefault(); // Prevent default link behavior
+            e.preventDefault();
             window.scrollTo({
                 top: 0,
-                behavior: 'smooth' // Use smooth scrolling
+                behavior: 'smooth'
             });
         });
     }
+
+    // --- NEW: Scroll-Driven Animation for Showcase Highlight Block Icon ---
+    if (highlightBlock && 'IntersectionObserver' in window) {
+        const iconObserverOptions = {
+            root: null,
+            threshold: 0.2 // Trigger when 20% of the block is visible
+        };
+        const iconObserverCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('icon-animate-in');
+                    // Optional: Unobserve after the first animation if you only want it once
+                    // observer.unobserve(entry.target);
+                } else {
+                    // Optional: Remove class to re-animate if scrolled out and back in
+                    // This might be desired if the block itself has an entrance animation too
+                    // entry.target.classList.remove('icon-animate-in');
+                }
+            });
+        };
+        const iconObserver = new IntersectionObserver(iconObserverCallback, iconObserverOptions);
+        iconObserver.observe(highlightBlock);
+    }
+    // --- END NEW ICON ANIMATION ---
 
     console.log("JavaScript enhancements initialized.");
 

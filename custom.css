@@ -122,6 +122,20 @@ body {
     transform: translateY(-2px);
     box-shadow: 0 4px 10px rgba(var(--accent-color-rgb-tuple), 0.3);
 }
+
+/* --- Specific Hover for "Play We are Warriors" button --- */
+.showcase-cta .btn-primary:hover,
+.showcase-cta .btn-primary:focus,
+.showcase-cta .btn-primary:focus-visible {
+    background-color: #f0db4f; /* JS yellow color from .tag-js */
+    border-color: #d4bd41;     /* Darker JS yellow, similar to .tag-js:hover */
+    color: #323330;            /* Dark text, like .tag-js */
+    /* transform: translateY(-2px); /* Already in general .btn-primary:hover */
+    box-shadow: 0 4px 10px rgba(240, 219, 79, 0.3); /* Yellowish shadow */
+}
+/* --- End Specific Hover --- */
+
+
 .btn .arrow-icon {
     display: inline-block;
     margin-left: 0.5em;
@@ -281,11 +295,11 @@ main section[id]:nth-child(even).section-is-visible { opacity: 1; transform: tra
 }
 .profile-pic {
     width: 220px; height: 220px; border-radius: 50%;
-    border: 5px solid var(--white-color); box-shadow: 0 8px 25px rgba(var(--primary-color-rgb-tuple), 0.15); /* Updated to use primary color rgb */
+    border: 5px solid var(--white-color); box-shadow: 0 8px 25px rgba(var(--primary-color-rgb-tuple), 0.15);
     object-fit: cover; display: block; margin: 0 auto;
     transition: transform var(--transition-speed) ease, box-shadow var(--transition-speed) ease;
 }
-.profile-pic:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 12px 30px rgba(var(--primary-color-rgb-tuple), 0.2); } /* Updated to use primary color rgb */
+.profile-pic:hover { transform: translateY(-5px) scale(1.05); box-shadow: 0 12px 30px rgba(var(--primary-color-rgb-tuple), 0.2); }
 .key-skills {
     margin: 30px 0 25px 0; padding: 20px;
     background-color: rgba(var(--secondary-color-rgb-tuple), 0.05);
@@ -297,7 +311,7 @@ main section[id]:nth-child(even).section-is-visible { opacity: 1; transform: tra
 .key-skills li { margin-bottom: 10px; font-size: 0.95rem; color: var(--dark-text); display: flex; align-items: center; gap: 10px; }
 .key-skills li:last-child { margin-bottom: 0; }
 .skill-icon { display: inline-block; color: var(--secondary-color); text-align: center; }
-strong, .skill-highlight { /* This is a general 'strong' style, specific overrides might be needed elsewhere if this is too broad */
+strong, .skill-highlight { /* General strong style */
     font-weight: 600; color: var(--primary-color);
     background-color: var(--highlight-bg); padding: 0.1em 0.4em;
     border-radius: 4px; margin: 0 0.1em; display: inline-block; line-height: 1.5;
@@ -424,7 +438,7 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
 .project-item.project-login-system:hover::after { transform: scale(1.1) rotate(-5deg); }
 
 /* ================================== */
-/*      Final Project Showcase (ENHANCED STYLES) */
+/*      Final Project Showcase (REVISED STRUCTURE STYLES) */
 /* ================================== */
 .final-project-showcase {
     margin-top: 70px;
@@ -436,7 +450,7 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
     position: relative;
 }
 
-.final-project-showcase h3 {
+.final-project-showcase > h3 { /* Target direct child h3 for animation */
     text-align: center;
     color: var(--accent-color);
     margin-bottom: 40px;
@@ -448,93 +462,184 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
     left: 50%;
     transform: translateX(-50%);
     padding-bottom: 15px;
+    /* Animation properties */
+    opacity: 0;
+    transform: translateY(30px) translateX(-50%); /* Adjust translateX for positioning */
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+    will-change: opacity, transform;
 }
-.final-project-showcase h3::after {
+#projects.section-is-visible .final-project-showcase > h3 {
+    opacity: 1;
+    transform: translateY(0) translateX(-50%);
+    transition-delay: 0.2s; /* Stagger this first */
+}
+
+.final-project-showcase > h3::after {
     content: ''; position: absolute; width: 100px; height: 5px;
     bottom: 0; left: 50%; transform: translateX(-50%);
     background-color: hsl(from var(--accent-color) h s calc(l - 5%));
     border-radius: 2px;
 }
 
-/* --- MODIFICATIONS FOR .showcase-intro START --- */
-.showcase-intro {
-    /* Visual Grouping & Emphasis */
-    background-color: var(--white-color); /* Clean, solid background */
-    border-left: 5px solid var(--secondary-color); /* Distinct left border */
-    padding: 25px; /* Generous padding */
-    box-shadow: 0 4px 15px rgba(var(--dark-text-rgb-tuple), 0.06); /* Subtle box-shadow */
-    border-radius: 0 var(--border-radius) var(--border-radius) 0; /* Rounded corners on right */
-    text-align: left; /* Align text to left */
-
-    /* Layout */
-    max-width: 750px; /* Constrain width */
-    margin: 0 auto 50px auto; /* Center and add bottom margin */
-
-    /* Enhanced Typography (applied to the <p> inside via inheritance) */
-    font-size: 1.05rem;
-    line-height: 1.8; /* Good line-height */
-    color: var(--dark-text);
-
-    /* Entrance Animation */
+/* --- STYLES FOR THE NEW SHOWCASE HIGHLIGHT BLOCK --- */
+.showcase-highlight-block {
+    border-left: 5px solid var(--accent-color);
+    padding: 25px;
+    box-shadow: 0 6px 20px rgba(var(--dark-text-rgb-tuple), 0.07);
+    border-radius: 0 var(--border-radius) var(--border-radius) 0;
+    max-width: 750px;
+    margin: 0 auto 40px auto;
+    position: relative;
     opacity: 0;
-    transform: translateY(20px); /* Start slightly lower */
-    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.1s, /* Delay after main card (if any) or parent section */
-                transform 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.1s;
+    transform: translateY(20px);
+    transition:
+        opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000), /* Delay removed from here */
+        transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000), /* Delay removed, duration matched to opacity */
+        box-shadow var(--transition-speed) ease,
+        background-color var(--transition-speed-fast) ease;
+    will-change: opacity, transform, box-shadow, background-color;
+    background-image: linear-gradient(
+        45deg,
+        rgba(0,0,0,0.015) 25%,
+        transparent 25%, transparent 50%,
+        rgba(0,0,0,0.015) 50%, rgba(0,0,0,0.015) 75%,
+        transparent 75%, transparent
+    );
+    background-size: 8px 8px;
+    background-color: rgba(var(--accent-color-rgb-tuple), 0.05);
+}
+
+#projects.section-is-visible .showcase-highlight-block {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.4s; /* Stagger after h3 */
+}
+
+.showcase-highlight-block:hover {
+    transform: translateY(-6px) scale(1.01);
+    box-shadow: 0 12px 35px rgba(var(--accent-color-rgb-tuple), 0.12),
+                0 4px 10px rgba(var(--dark-text-rgb-tuple), 0.08);
+    background-color: rgba(var(--accent-color-rgb-tuple), 0.07);
+}
+
+.showcase-highlight-block h4,
+.showcase-highlight-block p,
+.showcase-highlight-block .project-tags {
+    opacity: 0;
+    transform: translateY(15px);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
     will-change: opacity, transform;
 }
 
-/* Trigger animation when the PARENT SECTION (#projects) is visible */
-#projects.section-is-visible .showcase-intro {
+#projects.section-is-visible .showcase-highlight-block h4 {
     opacity: 1;
-    transform: translateY(0); /* Animate to original position */
+    transform: translateY(0);
+    transition-delay: 0.2s; /* Relative to .showcase-highlight-block's animation start */
 }
 
-/* Remove default margin from the p tag as parent .showcase-intro now has padding */
-.showcase-intro p {
-    margin-bottom: 0;
+#projects.section-is-visible .showcase-highlight-block p {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.35s; /* Relative to .showcase-highlight-block's animation start */
 }
 
-/* Style <strong> tags within the .showcase-intro paragraph */
-.showcase-intro strong {
-    color: var(--primary-color); /* Use primary color for emphasis */
-    font-weight: 600; /* Ensure it's bold */
-    background-color: transparent; /* Override general strong styles if they have a background */
-    padding: 0; /* Override general strong styles if they have padding */
-    margin: 0; /* Override general strong styles if they have margin */
-    display: inline; /* Ensure it flows with text */
+#projects.section-is-visible .showcase-highlight-block .project-tags {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.5s; /* Relative to .showcase-highlight-block's animation start */
 }
-/* --- MODIFICATIONS FOR .showcase-intro END --- */
 
-
-.final-project-showcase .project-item.project-js-game {
-    background-color: rgba(var(--accent-color-rgb-tuple), 0.05);
-    border-left: 4px solid var(--accent-color);
-    padding: 30px 25px 30px 35px;
-    box-shadow: var(--card-shadow);
-    margin: 0 auto 40px auto;
-    max-width: 90%;
-    transition: background-color var(--transition-speed-fast) ease,
-                border-color var(--transition-speed-fast) ease,
-                box-shadow var(--transition-speed-fast) ease,
-                transform var(--transition-speed-fast) ease;
-}
-.final-project-showcase .project-item.project-js-game:hover {
-    background-color: rgba(var(--accent-color-rgb-tuple), 0.1);
-    border-left-color: var(--accent-color);
-    box-shadow: var(--card-hover-shadow);
-    transform: translateY(-5px) scale(1.01);
-}
-.final-project-showcase .project-item.project-js-game::after {
-    content: '⚔️'; font-size: 5rem; opacity: 0.15;
-    transform: scale(1) rotate(-8deg); right: 20px; bottom: 20px;
+.showcase-highlight-block h4 {
     color: var(--accent-color);
-    transition: opacity 0.4s ease, transform 0.4s cubic-bezier(0.68, -0.55, 0.27, 1.55), color 0.3s ease;
-    will-change: opacity, transform, color;
+    font-size: 1.25rem;
+    font-weight: 600;
+    margin-bottom: 0.75em;
 }
-.final-project-showcase .project-item.project-js-game:hover::after {
-     opacity: 0.35; transform: scale(1.18) rotate(10deg) translateX(-10px);
-     color: var(--accent-color);
+.showcase-highlight-block h4 a {
+    color: inherit;
+    text-decoration: none;
+    transition: color var(--transition-speed-fast);
 }
+.showcase-highlight-block h4 a::after {
+    content: ' ↗';
+    font-size: 0.8em;
+    display: inline-block;
+    opacity: 0.7;
+    transition: transform var(--transition-speed-fast) ease, opacity var(--transition-speed-fast) ease;
+    transform: translateY(-2px) translateX(0);
+}
+.showcase-highlight-block h4 a:hover,
+.showcase-highlight-block h4 a:focus,
+.showcase-highlight-block h4 a:focus-visible {
+    color: hsl(from var(--accent-color) h s calc(l - 10%));
+}
+.showcase-highlight-block h4 a:hover::after,
+.showcase-highlight-block h4 a:focus::after,
+.showcase-highlight-block h4 a:focus-visible::after {
+    opacity: 1;
+    transform: translateY(-2px) translateX(3px);
+}
+
+.showcase-highlight-block p {
+    font-size: 1rem;
+    line-height: 1.8;
+    color: var(--dark-text);
+    margin-bottom: 1.5em;
+}
+.showcase-highlight-block p strong {
+    background-color: transparent;
+    padding: 0;
+    margin: 0;
+    color: var(--primary-color);
+    display: inline;
+    font-weight: 600;
+}
+
+.showcase-highlight-block .project-tags {
+    margin-top: 0;
+    position: relative;
+    z-index: 1;
+}
+
+.showcase-highlight-block::after { /* Swords icon for this block */
+    content: '⚔️';
+    position: absolute;
+    font-size: 3.5rem;
+    right: 20px;
+    bottom: 15px;
+    color: var(--accent-color);
+    pointer-events: none;
+    z-index: 0;
+    will-change: opacity, transform;
+
+    /* Initial state for JS-driven entrance animation */
+    transform: scale(0.5) rotate(-45deg) translateX(20px);
+    opacity: 0;
+
+    /* MODIFIED: Base transition for hover and general changes (faster, no delay) */
+    transition: opacity var(--transition-speed) ease-out, /* Using 0.3s from variable */
+                transform var(--transition-speed) cubic-bezier(0.23, 1, 0.32, 1); /* 0.3s, bouncy feel */
+}
+
+/* Class added by JS to animate the icon in */
+.showcase-highlight-block.icon-animate-in::after {
+    transform: scale(1) rotate(-8deg); /* Target state (original default) */
+    opacity: 0.08; /* Original opacity */
+
+    /* ADDED: Specific transition override for the entrance animation, including the desired delay */
+    transition-property: opacity, transform;
+    transition-duration: 0.5s, 0.6s; /* Duration for opacity, duration for transform */
+    transition-timing-function: ease-out, cubic-bezier(0.34, 1.56, 0.64, 1); /* Timing for opacity, timing for transform */
+    transition-delay: 0.6s, 0.6s; /* Delay for opacity animation, delay for transform animation (relative to .icon-animate-in being added) */
+}
+
+/* Hover state for the icon */
+.showcase-highlight-block:hover::after {
+     /* MODIFIED: More pronounced hover effect */
+     opacity: 0.25; /* Increased opacity for more visibility */
+     transform: scale(1.3) rotate(15deg) translateX(-10px) translateY(-5px); /* More dynamic transform */
+}
+/* --- END STYLES FOR SHOWCASE HIGHLIGHT BLOCK --- */
 
 .showcase-details-grid {
     display: grid;
@@ -555,19 +660,25 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
     border: 1px solid var(--border-color);
     opacity: 0;
     transform: translateY(30px);
-    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.2s, /* Delay after intro or game card */
-                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000) 0.2s,
+    transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000), /* Delay removed */
+                transform 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000), /* Delay removed */
                 background-color var(--transition-speed-fast),
                 border-color var(--transition-speed-fast),
                 box-shadow var(--transition-speed-fast);
     will-change: opacity, transform;
 }
 
-#projects.section-is-visible .showcase-key-features,
+#projects.section-is-visible .showcase-key-features {
+    opacity: 1;
+    transform: translateY(0);
+    transition-delay: 0.6s; /* Stagger after highlight block */
+}
 #projects.section-is-visible .showcase-reflection {
     opacity: 1;
     transform: translateY(0);
+    transition-delay: 0.7s; /* Stagger slightly after key features */
 }
+
 
 .showcase-key-features {
     border-left: 4px solid var(--secondary-color);
@@ -575,8 +686,8 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
 }
 
 .showcase-reflection {
-    border-left: 4px solid var(--accent-color);
-    background-color: rgba(var(--accent-color-rgb-tuple), 0.02);
+    border-left: 4px solid var(--secondary-color);
+    background-color: rgba(var(--secondary-color-rgb-tuple), 0.02);
 }
 
 .showcase-key-features:hover,
@@ -584,7 +695,6 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
     transform: translateY(-4px) scale(1.01);
     box-shadow: 0 6px 18px rgba(0,0,0,0.08);
 }
-
 
 .showcase-key-features h4,
 .showcase-reflection h4 {
@@ -606,7 +716,6 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
 .showcase-reflection:hover h4::before {
     transform: rotateY(180deg) scale(1.1);
 }
-
 
 .showcase-key-features ul {
     list-style: none;
@@ -676,17 +785,15 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
     background-color: rgba(var(--secondary-color-rgb-tuple), 0.1);
     padding: 0.1em 0.3em;
     border-radius: 3px;
-    /* Ensure these are inline and don't inherit block properties from other strong tags */
-    display: inline; 
+    display: inline;
     margin: 0;
 }
 .showcase-reflection .highlight-text {
-    background: linear-gradient(to top, rgba(var(--accent-color-rgb-tuple), 0.2) 0%, rgba(var(--accent-color-rgb-tuple), 0.2) 40%, transparent 40%);
+    background: linear-gradient(to top, rgba(var(--secondary-color-rgb-tuple), 0.2) 0%, rgba(var(--secondary-color-rgb-tuple), 0.2) 40%, transparent 40%);
     padding: 0.1em 0;
     margin: 0 -0.1em;
     border-radius: 2px;
 }
-
 
 .showcase-visual {
     margin: 0 auto 40px auto;
@@ -709,6 +816,16 @@ strong, .skill-highlight { /* This is a general 'strong' style, specific overrid
 .showcase-cta {
     text-align: center;
     margin-top: 10px;
+    /* Animation properties */
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow var(--transition-speed-fast) ease;
+    will-change: opacity, transform;
+}
+#projects.section-is-visible .showcase-cta {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+    transition-delay: 0.8s; /* Stagger after reflection */
 }
 
 
@@ -817,9 +934,10 @@ footer {
     .js-focused-category .project-item { padding-left: 22px; }
 
     .final-project-showcase { padding: 40px 20px; }
-    .final-project-showcase .project-item.project-js-game { max-width: 95%; }
+    .final-project-showcase > h3 { transform: translateY(30px) translateX(-50%); } /* Keep translateX for positioning */
+    #projects.section-is-visible .final-project-showcase > h3 { transform: translateY(0) translateX(-50%); }
+    .showcase-highlight-block { max-width: 90%; padding: 20px; }
     .showcase-details-grid { gap: 30px; }
-    .showcase-intro { max-width: 90%; padding: 20px; }
 }
 
 @media (max-width: 767.98px) {
@@ -847,7 +965,7 @@ footer {
     .about-content { padding: 25px 15px; }
     .about-layout { flex-direction: column; align-items: center; text-align: center; gap: 40px; }
     .about-text { text-align: left; max-width: 600px; margin: 0 auto; }
-    .about-intro { font-size: 1.1rem; text-align: center; } /* This is the #about section's intro, not showcase-intro */
+    .about-intro { font-size: 1.1rem; text-align: center; }
     .profile-pic { width: 180px; height: 180px; }
     .about-image::after { width: 50%; bottom: -10px; }
     .key-skills { margin-left: auto; margin-right: auto; max-width: 90%; padding: 15px; }
@@ -866,10 +984,30 @@ footer {
     .btn { font-size: 0.95rem; padding: 0.6em 1.3em; }
 
     .final-project-showcase { padding: 30px 15px; margin-top: 55px; padding-top: 30px; padding-bottom: 30px; }
-    .final-project-showcase h3 { font-size: 1.6rem; margin-bottom: 35px; }
-    .showcase-intro { font-size: 1rem; margin-bottom: 30px; padding: 20px; max-width: 100%; border-left-width: 4px; }
-    .final-project-showcase .project-item.project-js-game { padding: 25px 20px 25px 30px; max-width: 100%; border-left-width: 4px; margin-bottom: 30px; }
-    .final-project-showcase .project-item.project-js-game::after { font-size: 4rem; right: 15px; bottom: 15px; }
+    .final-project-showcase > h3 { font-size: 1.6rem; margin-bottom: 35px; transform: translateY(25px) translateX(-50%);}
+    #projects.section-is-visible .final-project-showcase > h3 { transform: translateY(0) translateX(-50%); }
+    .showcase-highlight-block {
+        padding: 20px;
+        margin-bottom: 30px;
+        border-left-width: 4px;
+        max-width: 100%; /* Allow full width on smaller screens */
+    }
+    .showcase-highlight-block h4 {
+        font-size: 1.15rem;
+    }
+    .showcase-highlight-block p {
+        font-size: 0.95rem;
+    }
+    .showcase-highlight-block::after {
+        font-size: 3rem;
+        right: 15px;
+        bottom: 10px;
+    }
+    /* ADDED: Responsive hover for icon on medium screens */
+    .showcase-highlight-block:hover::after {
+        opacity: 0.22;
+        transform: scale(1.2) rotate(10deg) translateX(-6px) translateY(-3px);
+    }
     .showcase-details-grid { grid-template-columns: 1fr; gap: 25px; margin-bottom: 30px; }
     .showcase-key-features, .showcase-reflection { padding: 20px; }
     .showcase-key-features h4, .showcase-reflection h4 { font-size: 1.15rem; margin-bottom: 15px; }
@@ -895,7 +1033,7 @@ footer {
     #about::before { width: 90%; height: 60%; top: 3%; left: -15%; opacity: 0.3; filter: blur(2px); animation-duration: calc(var(--blob-animation-duration) * 1.5); }
     .about-content { padding: 20px 15px; backdrop-filter: blur(3px); -webkit-backdrop-filter: blur(3px); }
     .profile-pic { width: 150px; height: 150px; border-width: 4px; }
-    .about-intro { font-size: 1.05rem; } /* This is the #about section's intro, not showcase-intro */
+    .about-intro { font-size: 1.05rem; }
     .about-text p { font-size: 1rem; }
     #about .about-image, #about .about-text > .about-intro,
     #about .about-text > p:nth-of-type(2), #about .about-text > p:nth-of-type(3),
@@ -917,17 +1055,33 @@ footer {
     .project-item::after { font-size: 2.2rem; opacity: 0.08; bottom: 8px; right: 8px; }
     .project-item:hover::after { opacity: 0.15; transform: scale(1.05) rotate(5deg); }
     .project-blackjack::after { font-size: 2.5rem; }
-    .final-project-showcase .project-item.project-js-game::after { font-size: inherit; }
     .btn { font-size: 0.9rem; padding: 0.55em 1.1em; }
 
-
     .final-project-showcase { padding: 25px 10px; margin-top: 45px; padding-top: 25px; padding-bottom: 25px; border-top: none; }
-    .final-project-showcase h3 { font-size: 1.45rem; padding-bottom: 10px; }
-    .final-project-showcase h3::after { width: 80px; }
-    .showcase-intro { font-size: 0.95rem; padding: 15px; border-left-width: 4px; }
-    .final-project-showcase .project-item.project-js-game { padding: 20px 15px 20px 20px; border-left-width: 3px; }
-    .final-project-showcase .project-item.project-js-game::after { font-size: 3.2rem; right: 10px; bottom: 10px; opacity: 0.15; }
-    .final-project-showcase .project-item.project-js-game:hover::after { opacity: 0.35; transform: scale(1.1) rotate(6deg) translateX(-5px); }
+    .final-project-showcase > h3 { font-size: 1.45rem; padding-bottom: 10px; transform: translateY(20px) translateX(-50%);}
+    #projects.section-is-visible .final-project-showcase > h3 { transform: translateY(0) translateX(-50%); }
+    .showcase-highlight-block {
+        padding: 15px;
+        border-left-width: 4px;
+    }
+    .showcase-highlight-block h4 {
+        font-size: 1.1rem;
+    }
+    .showcase-highlight-block p {
+        font-size: 0.9rem;
+    }
+    .showcase-highlight-block::after {
+        font-size: 2.5rem;
+        right: 10px;
+        bottom: 8px;
+    }
+    .showcase-highlight-block.icon-animate-in::after {
+        opacity: 0.1;
+    }
+    .showcase-highlight-block:hover::after {
+        opacity: 0.2;
+        transform: scale(1.15) rotate(8deg) translateX(-4px) translateY(-2px); /* Slightly enhanced existing */
+    }
     .showcase-key-features h4, .showcase-reflection h4 { font-size: 1.1rem; }
     .showcase-key-features li, .showcase-reflection p { font-size: 0.85rem; }
 
