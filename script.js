@@ -7,9 +7,8 @@ document.addEventListener('DOMContentLoaded', () => {
     const navLinks = document.querySelectorAll('header nav a');
     const scrollTopBtn = document.getElementById('scrollTopBtn');
     const projectItems = document.querySelectorAll('.project-item');
-
-    // NEW: Cache the showcase highlight block
-    const highlightBlock = document.querySelector('.showcase-highlight-block');
+    const highlightBlock = document.querySelector('.showcase-highlight-block'); // For the swords icon
+    const finalShowcase = document.querySelector('.final-project-showcase'); // For the grand entrance
 
 
     // --- Debounce Function (Helper for scroll/resize events) ---
@@ -35,7 +34,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const adjustedHeaderOffset = (header ? header.offsetHeight : 70) + 30;
 
         sections.forEach(section => {
-            // Consider only sections that are meant to be visible or are already visible
             if (section.classList.contains('section-is-visible') || getComputedStyle(section).opacity !== '0') {
                 const sectionTop = section.offsetTop - adjustedHeaderOffset;
                 const sectionBottom = sectionTop + section.offsetHeight;
@@ -45,7 +43,6 @@ document.addEventListener('DOMContentLoaded', () => {
             }
         });
 
-         // Fallback: If no section is perfectly matched, find the last visible one from top
          if (!currentSectionId && sections.length > 0) {
             for (let i = sections.length - 1; i >= 0; i--) {
                  if ((sections[i].classList.contains('section-is-visible') || getComputedStyle(sections[i]).opacity !== '0') &&
@@ -56,13 +53,11 @@ document.addEventListener('DOMContentLoaded', () => {
             }
          }
 
-         // Edge case: If scrolled to the very bottom of the page
-        if ((window.innerHeight + scrollPosition) >= document.body.offsetHeight - 50 && sections.length > 0) { // 50px buffer
+        if ((window.innerHeight + scrollPosition) >= document.body.offsetHeight - 50 && sections.length > 0) {
             currentSectionId = sections[sections.length - 1].getAttribute('id');
         }
-        // Edge case: If scrolled above the first section (e.g., top of page)
         else if (sections.length > 0 && scrollPosition < sections[0].offsetTop - adjustedHeaderOffset) {
-             currentSectionId = sections[0].getAttribute('id'); // Or set to empty if you prefer no active link
+             currentSectionId = sections[0].getAttribute('id');
         }
 
 
@@ -78,7 +73,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleHeaderScroll = () => {
         if (!header) return;
         if (window.matchMedia("(max-width: 767.98px)").matches) {
-             header.classList.remove('scrolled'); // Ensure it's not scrolled on mobile if header is static
+             header.classList.remove('scrolled');
              return;
         }
         if (window.scrollY > 50) {
@@ -108,7 +103,7 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Add Event Listeners ---
     window.addEventListener('scroll', onScroll);
     window.addEventListener('resize', debounce(() => {
-        handleHeaderScroll(); // Re-check header state on resize (e.g., moving from desktop to mobile view)
+        handleHeaderScroll();
     }, 50));
 
     // Initial calls on page load
@@ -120,21 +115,20 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('IntersectionObserver' in window && projectItems.length > 0) {
         const projectObserverOptions = {
             root: null,
-            rootMargin: '0px 0px -80px 0px', // Start loading a bit before fully in view
-            threshold: 0.1 // 10% of item visible
+            rootMargin: '0px 0px -80px 0px',
+            threshold: 0.1
         };
-        let itemIndex = 0; // For staggering
-        const processedItems = new WeakSet(); // To ensure animation only runs once per item
+        let itemIndex = 0;
+        const processedItems = new WeakSet();
 
         const projectObserverCallback = (entries, observer) => {
             entries.forEach((entry) => {
                 if (entry.isIntersecting && !processedItems.has(entry.target)) {
-                    const staggerDelay = itemIndex * 100; // 100ms stagger
+                    const staggerDelay = itemIndex * 100;
                     entry.target.style.setProperty('--card-delay', `${0.3 + staggerDelay / 1000}s`);
                     entry.target.classList.add('is-visible');
-                    processedItems.add(entry.target); // Mark as processed
+                    processedItems.add(entry.target);
                     itemIndex++;
-                    // No need to unobserve, as WeakSet handles re-triggering
                 }
             });
         };
@@ -155,16 +149,15 @@ document.addEventListener('DOMContentLoaded', () => {
     if ('IntersectionObserver' in window && sections.length > 0) {
         const sectionObserverOptions = {
             root: null,
-            rootMargin: '0px 0px -15% 0px', // Trigger when bottom 15% of viewport is approached
-            threshold: 0 // Trigger as soon as it enters the margin
+            rootMargin: '0px 0px -15% 0px',
+            threshold: 0
         };
         const sectionObserverCallback = (entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('section-is-visible');
-                    debounce(highlightNavLink, 50)(); // Update nav link when section becomes visible
+                    debounce(highlightNavLink, 50)();
                 }
-                 // Optional: else { entry.target.classList.remove('section-is-visible'); } // If you want animations on re-scroll out of view
             });
         };
         const sectionObserver = new IntersectionObserver(sectionObserverCallback, sectionObserverOptions);
@@ -172,17 +165,16 @@ document.addEventListener('DOMContentLoaded', () => {
             sectionObserver.observe(section);
         });
 
-        // Initial check for sections already in view on load to prevent FOUC
         sections.forEach(section => {
             const rect = section.getBoundingClientRect();
             const viewportHeight = window.innerHeight;
-            if (rect.top < viewportHeight * (1 - 0.15)) { // -15% from bottom
-                if (rect.bottom > 0) { // Section bottom is below viewport top
+            if (rect.top < viewportHeight * (1 - 0.15)) {
+                if (rect.bottom > 0) {
                      section.classList.add('section-is-visible');
                 }
             }
         });
-         highlightNavLink(); // Initial call after forced visibility checks
+         highlightNavLink();
     } else {
         console.warn("Intersection Observer not supported for sections or no sections found. Showing all sections immediately.");
         sections.forEach(section => {
@@ -203,7 +195,7 @@ document.addEventListener('DOMContentLoaded', () => {
         });
     }
 
-    // --- NEW: Scroll-Driven Animation for Showcase Highlight Block Icon ---
+    // --- Scroll-Driven Animation for Showcase Highlight Block Icon (SWORDS ICON) ---
     if (highlightBlock && 'IntersectionObserver' in window) {
         const iconObserverOptions = {
             root: null,
@@ -213,19 +205,52 @@ document.addEventListener('DOMContentLoaded', () => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     entry.target.classList.add('icon-animate-in');
-                    // Optional: Unobserve after the first animation if you only want it once
-                    // observer.unobserve(entry.target);
+                    // observer.unobserve(entry.target); // Optional: unobserve if you want it only once
                 } else {
-                    // Optional: Remove class to re-animate if scrolled out and back in
-                    // This might be desired if the block itself has an entrance animation too
-                    // entry.target.classList.remove('icon-animate-in');
+                    // entry.target.classList.remove('icon-animate-in'); // Optional: re-animate
                 }
             });
         };
         const iconObserver = new IntersectionObserver(iconObserverCallback, iconObserverOptions);
         iconObserver.observe(highlightBlock);
     }
-    // --- END NEW ICON ANIMATION ---
+
+    // --- IntersectionObserver for the Final Project Showcase "Grand Entrance" ---
+    if (finalShowcase && 'IntersectionObserver' in window) {
+        const showcaseObserverOptions = {
+            root: null,
+            threshold: 0.1, // Trigger when 10% of the element is visible
+            rootMargin: '0px 0px -50px 0px' // Start animation a bit before it's fully in view
+        };
+
+        const showcaseObserverCallback = (entries, observer) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const target = entry.target;
+                    target.classList.add('is-showcasing'); // Trigger parent's grand entrance
+
+                    // Use transitionend to trigger children's animations after parent is done
+                    const handleParentTransitionEnd = (event) => {
+                        // Listen for opacity or transform, and only on the showcase block itself
+                        if (event.target === target && (event.propertyName === 'opacity' || event.propertyName === 'transform')) {
+                            target.classList.add('animate-showcase-children');
+                            target.removeEventListener('transitionend', handleParentTransitionEnd); // Clean up listener
+                        }
+                    };
+                    target.addEventListener('transitionend', handleParentTransitionEnd);
+
+                    observer.unobserve(target); // Animate only once
+                }
+            });
+        };
+        const showcaseObserver = new IntersectionObserver(showcaseObserverCallback, showcaseObserverOptions);
+        showcaseObserver.observe(finalShowcase);
+    } else if (finalShowcase) {
+        // Fallback for browsers without IntersectionObserver or if something goes wrong
+        finalShowcase.classList.add('is-showcasing');
+        finalShowcase.classList.add('animate-showcase-children');
+    }
+    // --- END Final Project Showcase Observer ---
 
     console.log("JavaScript enhancements initialized.");
 
