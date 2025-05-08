@@ -130,7 +130,6 @@ body {
     background-color: #9a4ff0; /* JS yellow color from .tag-php */
     border-color: #5741d4;     /* Darker JS yellow, similar to .tag-php:hover */
     color: #323330;            /* Dark text, like .tag-php */
-    /* transform: translateY(-2px); /* Already in general .btn-primary:hover */
     box-shadow: 0 4px 10px rgba(240, 219, 79, 0.3); /* Yellowish shadow */
 }
 /* --- End Specific Hover --- */
@@ -354,41 +353,90 @@ strong, .skill-highlight { /* General strong style */
 }
 .project-list { display: flex; flex-direction: column; gap: 45px; list-style: none; padding: 0; margin: 0; }
 
-/* --- MODIFIED/NEW STYLES FOR PROJECT ITEMS 1-11 --- */
+/* --- PROJECT ITEM VISUAL CONTAINER STYLES (NEW / REVISED) --- */
 .project-item {
     display: flex;
-    gap: 30px; /* Increased gap slightly for visual separation */
+    gap: 30px;
     padding: 25px;
     border-radius: var(--border-radius);
-    background-color: var(--white-color); /* Give items a solid background */
-    border: 1px solid var(--border-color); /* Add a subtle border */
+    background-color: var(--white-color);
+    border: 1px solid var(--border-color);
     box-shadow: var(--card-shadow);
     opacity: 0; transform: translateY(20px);
     transition: background-color var(--transition-speed-fast) ease,
                 border-color var(--transition-speed-fast) ease,
                 opacity 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) var(--card-delay, 0.3s),
                 transform 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) var(--card-delay, 0.3s),
-                box-shadow var(--transition-speed) ease; /* Use normal transition for shadow */
+                box-shadow var(--transition-speed) ease;
     will-change: opacity, transform, box-shadow;
-    overflow: hidden;
+    overflow: hidden; 
     position: relative;
-    align-items: stretch; /* Make children stretch to fill height */
+    align-items: stretch;
 }
 
 .project-item .project-image-container {
-    flex: 0 0 40%; /* Adjust width as needed, e.g., 40% for image, 60% for text */
-    max-width: 400px; /* Max width for the image container */
-    min-height: 250px; /* Minimum height */
-    border-radius: var(--border-radius);
-    overflow: hidden;
-    background-color: rgba(var(--dark-text-rgb-tuple), 0.03); /* Light bg for the container */
-    display: flex; /* To center placeholder content */
-    align-items: center; /* To center placeholder content */
-    justify-content: center; /* To center placeholder content */
+    flex: 0 0 40%;
+    max-width: 400px;
+    min-height: 250px; 
+
+    display: grid; 
+    grid-template-rows: 1fr;
+    grid-template-columns: 1fr;
+    padding: 15px 15px 45px 15px;
+
+    background-color: var(--white-color); 
+    border-radius: var(--border-radius); 
+    position: relative; 
+    transition: transform var(--transition-speed) ease; 
 }
 
+.project-item .project-image-container > img,
+.project-item .project-image-container::after { 
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+}
+
+.project-item .project-image-container img {
+    width: 100%;  
+    height: 100%; 
+    object-fit: cover; 
+    object-position: center center; 
+    display: block;
+    border: 1px solid rgba(var(--dark-text-rgb-tuple), 0.1); 
+    border-radius: calc(var(--border-radius) * 0.5); 
+    transition: transform 0.35s cubic-bezier(0.23, 1, 0.32, 1); 
+    z-index: 0; 
+}
+
+.project-item .project-image-container::after { /* Color Overlay */
+    content: '';
+    background-color: rgba(var(--primary-color-rgb-tuple), 0.65); 
+    opacity: 0; /* Hidden by default, and will remain hidden on hover too */
+    transition: opacity var(--transition-speed-fast) ease-out;
+    pointer-events: none; 
+    z-index: 1; 
+    border-radius: calc(var(--border-radius) * 0.5); 
+}
+
+.project-item:hover .project-image-container {
+    transform: translateY(-3px) rotate(-1.5deg) scale(1.02); 
+}
+
+.project-item:hover .project-image-container img {
+    transform: scale(1.07); 
+}
+
+/*
+Removed this rule to keep the overlay hidden on hover:
+.project-item:hover .project-image-container::after {
+    opacity: 1;
+}
+*/
+/* --- END PROJECT ITEM VISUAL CONTAINER STYLES --- */
+
+
 .project-item .project-image-container .visual-placeholder {
-    width: 90%; /* Placeholder takes most of the container */
+    width: 90%;
     height: 90%;
     display: flex;
     align-items: center;
@@ -401,14 +449,18 @@ strong, .skill-highlight { /* General strong style */
     padding: 15px;
     text-align: center;
     box-sizing: border-box;
+    grid-row: 1 / 1;
+    grid-column: 1 / 1;
+    align-self: center;
+    justify-self: center;
 }
 
 .project-item .project-text-content {
-    flex: 1; /* Takes remaining space */
+    flex: 1;
     display: flex;
     flex-direction: column;
-    justify-content: space-between; /* Distribute space: timeline/details top, tags bottom */
-    padding: 5px 0; /* Small vertical padding inside text content */
+    justify-content: space-between;
+    padding: 5px 0;
 }
 
 .project-item .project-timeline {
@@ -417,14 +469,9 @@ strong, .skill-highlight { /* General strong style */
     color: var(--secondary-color);
     text-transform: uppercase;
     letter-spacing: 0.5px;
-    margin-bottom: 12px; /* Space before the main project title */
-    text-align: left; /* Default, will be overridden for even items if needed */
-    /* Removed flex properties, no longer needed here */
+    margin-bottom: 12px;
+    text-align: left;
     position: static;
-}
-
-.project-item .project-details {
-    /* flex: 1; /* Removed, as parent .project-text-content handles flex distribution */
 }
 
 .project-item .project-details h4 {
@@ -463,34 +510,24 @@ strong, .skill-highlight { /* General strong style */
     display: flex;
     flex-wrap: wrap;
     gap: 8px;
-    margin-top: 15px; /* Ensure space above tags */
-    position: relative; /* Keep for z-index if needed */
+    margin-top: 15px;
+    position: relative;
     z-index: 1;
 }
 
-/* Alternating layout for image left/right */
-/* This applies to direct children of .project-list that are .project-item */
 .project-list > .project-item:nth-child(even) {
     flex-direction: row-reverse;
 }
-/* Optional: If you want timeline to align to the new "start" of text-content block */
-.project-list > .project-item:nth-child(even) .project-timeline {
-    /* text-align: right; */ /* Or keep left if preferred */
-}
+.project-list > .project-item:nth-child(even) .project-timeline {}
 
-/* Hide the large background emoji for these new layout items */
-.project-list > .project-item::after {
-    content: none !important;
-    display: none !important;
-}
 
 .project-item.is-visible { opacity: 1; transform: translateY(0); }
 
 .project-item:hover {
-    background-color: var(--white-color); /* Keep background white on hover */
-    border-color: var(--secondary-color); /* Highlight border */
+    background-color: var(--white-color);
+    border-color: var(--secondary-color);
     box-shadow: var(--card-hover-shadow);
-    transform: translateY(-5px); /* Lift effect */
+    transform: translateY(-5px); 
 }
 
 .tag {
@@ -515,22 +552,15 @@ strong, .skill-highlight { /* General strong style */
 
 
 .js-focused-category .project-item {
-    /* The border and padding might look better on the .project-text-content if that's desired,
-       but applying to the whole item is simpler and generally okay. */
     border-left: 3px solid var(--secondary-color);
-    padding-left: 22px; /* Existing padding */
+    padding-left: 22px;
 }
-/* Adjust for row-reverse */
 .js-focused-category .project-list > .project-item:nth-child(even) {
     border-left: none;
     border-right: 3px solid var(--secondary-color);
-    padding-left: 25px; /* Original item padding */
-    padding-right: 22px; /* New padding for border */
+    padding-left: 25px;
+    padding-right: 22px;
 }
-
-
-/* --- End MODIFIED/NEW STYLES FOR PROJECT ITEMS 1-11 --- */
-
 
 /* ================================== */
 /*      Final Project Showcase (REVISED STRUCTURE STYLES) */
@@ -543,28 +573,25 @@ strong, .skill-highlight { /* General strong style */
     border-radius: var(--border-radius);
     position: relative;
 
-    /* NEW: Initial state for grand entrance */
     opacity: 0;
-    transform: translateY(80px) scale(0.85); /* Start lower and smaller */
-    background-image: linear-gradient(135deg, rgba(var(--primary-color-rgb-tuple), 0.01), rgba(var(--primary-color-rgb-tuple), 0.04)); /* Subtle gradient for animation */
-    background-size: 250% 250%; /* Larger size for movement */
-    background-position: 0% 0%; /* Start position of gradient */
+    transform: translateY(80px) scale(0.85); 
+    background-image: linear-gradient(135deg, rgba(var(--primary-color-rgb-tuple), 0.01), rgba(var(--primary-color-rgb-tuple), 0.04));
+    background-size: 250% 250%; 
+    background-position: 0% 0%; 
     transition: opacity 1s cubic-bezier(0.23, 1, 0.32, 1),
                 transform 1s cubic-bezier(0.23, 1, 0.32, 1),
-                background-color 0.8s ease-out 0.2s, /* For final static color */
-                background-position 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s; /* For gradient sweep */
+                background-color 0.8s ease-out 0.2s,
+                background-position 1.2s cubic-bezier(0.25, 0.1, 0.25, 1) 0.2s;
     will-change: opacity, transform, background-color, background-position;
 }
 
-/* NEW: Visible state for .final-project-showcase (triggered by JS .is-showcasing class) */
 .final-project-showcase.is-showcasing {
     opacity: 1;
     transform: translateY(0) scale(1);
-    background-color: rgba(var(--primary-color-rgb-tuple), 0.02); /* Target static background color */
-    background-position: 50% 50%; /* End position for gradient sweep (centers it) */
+    background-color: rgba(var(--primary-color-rgb-tuple), 0.02); 
+    background-position: 50% 50%; 
 }
 
-/* --- Children of .final-project-showcase: Initial states before parent's .animate-showcase-children class --- */
 .final-project-showcase > h3,
 .final-project-showcase .showcase-highlight-block,
 .final-project-showcase .showcase-key-features,
@@ -574,9 +601,7 @@ strong, .skill-highlight { /* General strong style */
     will-change: opacity, transform;
 }
 
-/* Individual initial transforms (some already existed, some need to be explicit here) */
 .final-project-showcase > h3 {
-    /* Existing styles for centering & looks */
     text-align: center;
     color: var(--accent-color);
     margin-bottom: 40px;
@@ -587,9 +612,8 @@ strong, .skill-highlight { /* General strong style */
     display: inline-block;
     left: 50%;
     padding-bottom: 15px;
-    /* Animation specific */
-    transform: translateY(30px) translateX(-50%); /* Keep translateX for centering */
-    transition: opacity 0.6s ease-out, transform 0.6s ease-out; /* Base transition */
+    transform: translateY(30px) translateX(-50%); 
+    transition: opacity 0.6s ease-out, transform 0.6s ease-out; 
 }
 .final-project-showcase > h3::after {
     content: ''; position: absolute; width: 100px; height: 5px;
@@ -599,7 +623,6 @@ strong, .skill-highlight { /* General strong style */
 }
 
 .final-project-showcase .showcase-highlight-block {
-    /* Base transition for highlight block itself */
     transform: translateY(20px);
     transition:
         opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000),
@@ -623,58 +646,52 @@ strong, .skill-highlight { /* General strong style */
     transition: opacity 0.5s ease-out, transform 0.5s ease-out, box-shadow var(--transition-speed-fast) ease;
 }
 
-
-/* --- Children animations triggered by .animate-showcase-children class on parent --- */
 .final-project-showcase.animate-showcase-children > h3 {
     opacity: 1;
-    transform: translateY(0) translateX(-50%); /* Maintain centering */
-    transition-delay: 0.1s; /* First to animate after parent is done */
+    transform: translateY(0) translateX(-50%); 
+    transition-delay: 0.1s; 
 }
 
 .final-project-showcase.animate-showcase-children .showcase-highlight-block {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.3s; /* After h3 */
+    transition-delay: 0.3s; 
 }
 
-/* Animations for elements INSIDE .showcase-highlight-block, relative to it becoming visible */
-/* Their base opacity/transform and transition are already defined. We just add delays. */
 .final-project-showcase.animate-showcase-children .showcase-highlight-block h4 {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.5s; /* 0.3s (block) + 0.2s (h4 internal stagger) */
+    transition-delay: 0.5s; 
 }
 .final-project-showcase.animate-showcase-children .showcase-highlight-block p {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.65s; /* 0.3s (block) + 0.35s (p internal stagger) */
+    transition-delay: 0.65s; 
 }
 .final-project-showcase.animate-showcase-children .showcase-highlight-block .project-tags {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.8s; /* 0.3s (block) + 0.5s (tags internal stagger) */
+    transition-delay: 0.8s; 
 }
 
 
 .final-project-showcase.animate-showcase-children .showcase-key-features {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.6s; /* After highlight block content starts appearing */
+    transition-delay: 0.6s; 
 }
 .final-project-showcase.animate-showcase-children .showcase-reflection {
     opacity: 1;
     transform: translateY(0);
-    transition-delay: 0.75s; /* After key features */
+    transition-delay: 0.75s; 
 }
 
 .final-project-showcase.animate-showcase-children .showcase-cta {
     opacity: 1;
     transform: translateY(0) scale(1);
-    transition-delay: 0.9s; /* Last to animate */
+    transition-delay: 0.9s; 
 }
 
-
-/* --- STYLES FOR THE NEW SHOWCASE HIGHLIGHT BLOCK (Base styles) --- */
 .showcase-highlight-block {
     border-left: 5px solid var(--accent-color);
     padding: 25px;
@@ -683,7 +700,7 @@ strong, .skill-highlight { /* General strong style */
     max-width: 750px;
     margin: 0 auto 40px auto;
     position: relative;
-    will-change: opacity, transform, box-shadow, background-color; /* Keep will-change */
+    will-change: opacity, transform, box-shadow, background-color; 
     background-image: linear-gradient(
         45deg,
         rgba(0,0,0,0.015) 25%,
@@ -695,20 +712,19 @@ strong, .skill-highlight { /* General strong style */
     background-color: rgba(var(--accent-color-rgb-tuple), 0.05);
 }
 
-.showcase-highlight-block:hover { /* Keep hover effects */
+.showcase-highlight-block:hover { 
     transform: translateY(-6px) scale(1.01);
     box-shadow: 0 12px 35px rgba(var(--accent-color-rgb-tuple), 0.12),
                 0 4px 10px rgba(var(--dark-text-rgb-tuple), 0.08);
     background-color: rgba(var(--accent-color-rgb-tuple), 0.07);
 }
 
-/* Children of showcase-highlight-block: initial animation state & base transition */
 .showcase-highlight-block h4,
 .showcase-highlight-block p,
 .showcase-highlight-block .project-tags {
     opacity: 0;
     transform: translateY(15px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Default transition for these items */
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out; 
     will-change: opacity, transform;
 }
 
@@ -774,31 +790,25 @@ strong, .skill-highlight { /* General strong style */
     pointer-events: none;
     z-index: 0;
     will-change: opacity, transform;
-    /* Initial state for JS-driven entrance animation */
     transform: scale(0.5) rotate(-45deg) translateX(20px);
     opacity: 0;
-    /* Base transition for hover and general changes */
     transition: opacity var(--transition-speed) ease-out,
                 transform var(--transition-speed) cubic-bezier(0.23, 1, 0.32, 1);
 }
 
-/* Class added by JS to animate the icon in */
 .showcase-highlight-block.icon-animate-in::after {
     transform: scale(1) rotate(-8deg);
     opacity: 0.08;
-    /* Specific transition override for the entrance animation */
     transition-property: opacity, transform;
     transition-duration: 0.5s, 0.6s;
     transition-timing-function: ease-out, cubic-bezier(0.34, 1.56, 0.64, 1);
-    transition-delay: 0.6s, 0.6s; /* Delay for icon animation */
+    transition-delay: 0.6s, 0.6s; 
 }
 
-/* Hover state for the icon */
 .showcase-highlight-block:hover::after {
      opacity: 0.25;
      transform: scale(1.3) rotate(15deg) translateX(-10px) translateY(-5px);
 }
-/* --- END STYLES FOR SHOWCASE HIGHLIGHT BLOCK --- */
 
 .showcase-details-grid {
     display: grid;
@@ -817,7 +827,7 @@ strong, .skill-highlight { /* General strong style */
     background-color: var(--white-color);
     box-shadow: 0 3px 10px rgba(0,0,0,0.05);
     border: 1px solid var(--border-color);
-    will-change: opacity, transform; /* Keep will-change for their own animations */
+    will-change: opacity, transform; 
 }
 
 .showcase-key-features {
@@ -956,7 +966,6 @@ strong, .skill-highlight { /* General strong style */
 .showcase-cta {
     text-align: center;
     margin-top: 10px;
-    /* Animation properties (initial state) already handled by general rules for showcase children */
     will-change: opacity, transform;
 }
 
@@ -1062,34 +1071,31 @@ footer {
     .profile-pic { width: 200px; height: 200px; }
     section[id] > .container > h2::before { font-size: 0.95rem; }
     
-    /* Responsive for new project item layout */
     .project-list > .project-item,
     .project-list > .project-item:nth-child(even) {
         flex-direction: column;
-        align-items: stretch; /* Ensure children take full width */
+        align-items: stretch; 
         gap: 20px;
     }
     .project-item .project-image-container {
-        flex-basis: auto; /* Reset flex-basis */
-        width: 100%; /* Take full width */
-        height: 220px; /* Or use aspect-ratio */
+        flex-basis: auto; 
+        width: 100%; 
         margin-bottom: 20px;
-        max-width: none; /* Remove max-width for stacked layout */
+        max-width: none; 
     }
     .project-item .project-text-content {
         width: 100%;
         padding: 0;
     }
      .project-item .project-timeline {
-        text-align: left !important; /* Ensure timeline is always left-aligned when stacked */
+        text-align: left !important; 
     }
-    .js-focused-category .project-list > .project-item:nth-child(even) { /* Reset side border for stacked */
+    .js-focused-category .project-list > .project-item:nth-child(even) { 
         border-right: none;
         border-left: 3px solid var(--secondary-color);
-        padding-right: 25px; /* Original item padding */
+        padding-right: 25px; 
         padding-left: 22px;
     }
-    /* End responsive for new project item layout */
 
     .final-project-showcase { padding: 40px 20px; }
     .showcase-highlight-block { max-width: 90%; padding: 20px; }
@@ -1132,24 +1138,21 @@ footer {
     .project-category h3::after { width: 70px; }
     .category-divider { margin: 40px auto 30px auto; }
     
-    /* Responsive for new project item layout (stacking already handled) */
     .project-item {
-        /* Was: flex-direction: column; gap: 10px; padding: 20px; */
-        gap: 15px; /* Consistent gap with 991px breakpoint */
-        padding: 20px; /* Consistent padding */
+        gap: 15px; 
+        padding: 20px; 
     }
     .project-item .project-image-container {
-        height: 200px; /* Adjust placeholder height */
+        min-height: 200px; 
         margin-bottom: 15px;
     }
     .js-focused-category .project-item {
-        padding: 20px; padding-left: calc(20px - 3px + 3px); /* Maintain border visibility */
+        padding: 20px; padding-left: calc(20px - 3px + 3px); 
     }
     .js-focused-category .project-list > .project-item:nth-child(even){
-        padding-left: calc(20px - 3px + 3px); /* Correct for border on left when stacked */
+        padding-left: calc(20px - 3px + 3px); 
         padding-right: 20px;
     }
-    /* End responsive for new project item layout */
     
     .project-details h4 { font-size: 1.1rem; }
     .project-details p { font-size: 0.9rem; }
@@ -1205,24 +1208,24 @@ footer {
     .project-category h3::after { width: 60px; }
     .category-divider { margin: 30px auto 20px auto; }
     
-    /* Responsive for new project item layout */
     .project-item { padding: 15px; }
-    .project-item .project-image-container { height: 180px; }
+    .project-item .project-image-container {
+        min-height: 180px; 
+        padding: 10px 10px 30px 10px; 
+    }
     .js-focused-category .project-item {
-         padding: 15px; padding-left: calc(15px - 3px + 3px); /* Maintain border */
+         padding: 15px; padding-left: calc(15px - 3px + 3px); 
     }
     .js-focused-category .project-list > .project-item:nth-child(even){
         padding-left: calc(15px - 3px + 3px);
         padding-right: 15px;
     }
-    /* End responsive for new project item layout */
 
     .project-details h4 { font-size: 1.05rem; }
     .project-details h4 a::after { font-size: 0.7em; }
     .project-details p { font-size: 0.85rem; }
     .tag { font-size: 0.7rem; padding: 3px 8px; }
     .project-tags { gap: 6px; }
-    /* .project-item::after already removed globally for .project-list > .project-item */
     .btn { font-size: 0.9rem; padding: 0.55em 1.1em; }
 
     .final-project-showcase { padding: 25px 10px; margin-top: 45px; padding-top: 25px; padding-bottom: 25px; border-top: none; }
