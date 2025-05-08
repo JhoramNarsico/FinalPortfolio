@@ -71,7 +71,8 @@
                 <h2>My Projects & Activities</h2>
 
                 <!-- === Prelim Activities (HTML/CSS Focus) === -->
-                <div class="project-category">
+                <!-- ADDED data-category-id here -->
+                <div class="project-category" data-category-id="prelim">
                     <h3>Prelim Activities (Foundation Building)</h3>
                     <div class="project-list">
 
@@ -239,7 +240,8 @@
                 <hr class="category-divider">
 
                 <!-- === Midterm to Finals Activities (JavaScript Focus) === -->
-                <div class="project-category js-focused-category">
+                 <!-- ADDED data-category-id here -->
+                <div class="project-category js-focused-category" data-category-id="midterm-finals">
                     <h3>Midterm to Finals Activities (JavaScript & Beyond)</h3>
                     <div class="project-list">
 
@@ -343,12 +345,11 @@
                      </div> <!-- End project-list for JS category -->
 
                      <!-- ====================================== -->
-                     <!-- === Final Project Showcase (REVISED STRUCTURE) === -->
+                     <!-- === Final Project Showcase (Structure remains same) === -->
                      <!-- ====================================== -->
-                     <div class="final-project-showcase">
+                     <div class="final-project-showcase"> <!-- JS observer watches this specific element -->
                          <h3>Final Showcase: Culminating Project</h3>
 
-                         <!-- NEW Main block for the "We are Warriors" feature -->
                          <div class="showcase-highlight-block">
                              <h4><a href="https://wearewarriorsjepjorz.netlify.app/" target="_blank" rel="noopener noreferrer">"We are Warriors" JS Game</a></h4>
                              <p>
@@ -365,7 +366,6 @@
                                  <span class="tag">State Management</span>
                              </div>
                          </div>
-                         <!-- END NEW Main block -->
 
                          <div class="showcase-details-grid">
                              <div class="showcase-key-features">
@@ -410,6 +410,7 @@
                              </div>
                          </div>
 
+                         <!-- Optional Screenshot -->
                          <!--
                          <div class="showcase-visual">
                              <img src="path/to/your-game-screenshot.png" alt="Screenshot of We are Warriors game">
