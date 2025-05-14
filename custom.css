@@ -215,31 +215,97 @@ h4 { font-size: 1.15rem; margin-bottom: 0.6em; }
 /* ================================== */
 /*        Header & Navigation         */
 /* ================================== */
+/* START HEADER CSS MODIFICATIONS */
 header {
-    background: var(--content-container-bg); color: var(--primary-color); position: sticky; top: 0;
-    z-index: 1000; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07); height: var(--header-height);
-    display: flex; align-items: center;
+    background: var(--white-color); /* Changed from --content-container-bg */
+    color: var(--primary-color);
+    position: sticky;
+    top: 0;
+    z-index: 1000;
+    box-shadow: 0 2px 8px rgba(var(--dark-text-rgb-tuple), 0.06); /* Adjusted shadow */
+    height: var(--header-height);
+    display: flex;
+    align-items: center;
     transition: height var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
 }
-header .container { display: flex; justify-content: space-between; align-items: center; width: 100%; }
-header h1 { font-size: 1.6rem; margin: 0; font-weight: 700; color: var(--primary-color); transition: font-size var(--transition-speed) ease; }
-header nav ul { list-style: none; display: flex; margin: 0; padding: 0; }
-header nav li { margin-left: 35px; }
+header .container {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+}
+header h1 { /* Site Title / Logo */
+    font-size: 1.6rem;
+    margin: 0;
+    font-weight: 700;
+    color: var(--primary-color);
+    transition: font-size var(--transition-speed) ease, color var(--transition-speed-fast) ease;
+    letter-spacing: -0.5px; /* Optional: for tighter look */
+}
+header h1:hover {
+    color: var(--secondary-color);
+}
+
+header nav ul {
+    list-style: none;
+    display: flex;
+    margin: 0;
+    padding: 0;
+}
+header nav li {
+    margin-left: 40px; /* Increased spacing */
+}
 header nav a {
-    color: var(--dark-text); font-weight: 500; font-size: 0.95rem; padding: 5px 0; position: relative;
-    transition: color var(--transition-speed-fast) ease; outline: none;
+    color: var(--dark-text);
+    font-weight: 500;
+    font-size: 0.95rem;
+    padding: 8px 0; /* Increased vertical padding */
+    position: relative;
+    transition: color var(--transition-speed-fast) ease;
+    outline: none;
 }
 header nav a::after {
-    content: ''; position: absolute; width: 0; height: 2px; bottom: -4px; left: 0;
-    background-color: var(--secondary-color); transition: width var(--transition-speed) ease;
+    content: '';
+    position: absolute;
+    width: 0;
+    height: 2.5px; /* Slightly thicker underline */
+    bottom: -5px; /* Adjusted position */
+    left: 0;
+    background-color: var(--accent-color); /* Changed to accent-color */
+    transition: width var(--transition-speed) ease;
 }
-header nav a:hover { color: var(--secondary-color); }
-header nav a:hover::after, header nav a.active::after,
-header nav a:focus::after, header nav a:focus-visible::after { width: 100%; }
-header nav a.active, header nav a:focus, header nav a:focus-visible { color: var(--secondary-color); }
-header.scrolled { height: var(--header-height-scrolled); box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08); }
-header.scrolled h1 { font-size: 1.5rem; }
-header.scrolled nav a { font-size: 0.9rem; }
+header nav a:hover,
+header nav a:focus-visible, /* Added for keyboard navigation */
+header nav a.active {
+    color: var(--accent-color); /* Changed to accent-color */
+}
+header nav a:hover::after,
+header nav a:focus-visible::after, /* Added for keyboard navigation */
+header nav a.active::after {
+    width: 100%;
+}
+/* Keep :focus for general focus, but :focus-visible for visual cues only when keyboard navigating */
+header nav a:focus { 
+    color: var(--accent-color);
+}
+header nav a:focus::after {
+    width: 100%;
+}
+
+
+header.scrolled {
+    height: var(--header-height-scrolled);
+    box-shadow: 0 3px 12px rgba(var(--dark-text-rgb-tuple), 0.08); /* Adjusted scrolled shadow */
+    background: var(--white-color); /* Ensure background remains white on scroll */
+}
+header.scrolled h1 {
+    font-size: 1.5rem;
+}
+header.scrolled nav a {
+    font-size: 0.9rem;
+}
+/* END HEADER CSS MODIFICATIONS */
+
 
 /* ================================== */
 /*     Sections General Styling       */
@@ -808,15 +874,73 @@ strong, .skill-highlight {
 /* ================================== */
 /*             Footer                 */
 /* ================================== */
-footer { text-align: center; padding: 30px 20px; margin-top: 0; color: var(--subtle-text); background-color: var(--light-bg); font-size: 0.9rem; }
-.footer-content { display: flex; flex-direction: column; align-items: center; gap: 8px; }
-.footer-content p { margin: 0; }
-.copyright { display: flex; align-items: center; gap: 8px; flex-wrap: wrap; justify-content: center; }
-.footer-icon-link { display: inline-flex; align-items: center; outline: none; }
-.footer-icon-link svg { width: 18px; height: 18px; fill: var(--subtle-text); transition: fill var(--transition-speed-fast) ease; vertical-align: middle; }
-.footer-icon-link:hover svg, .footer-icon-link:focus svg, .footer-icon-link:focus-visible svg { fill: var(--secondary-color); }
-.footer-tech { font-size: 0.85em; opacity: 0.8; }
-@media (min-width: 576px) { .footer-content { flex-direction: row; justify-content: space-between; } .copyright { justify-content: flex-start; } .footer-tech { text-align: right; } }
+/* START FOOTER CSS MODIFICATIONS */
+footer {
+    text-align: center;
+    padding: 50px 20px; /* Increased padding */
+    margin-top: 0;
+    color: var(--light-text); /* Changed text color */
+    background-color: var(--primary-color); /* Changed background */
+    font-size: 0.9rem;
+}
+.footer-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Increased gap */
+}
+.footer-content p {
+    margin: 0;
+    color: var(--light-text); /* Ensure p tags inherit new color */
+}
+.copyright {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+.footer-icon-link {
+    display: inline-flex;
+    align-items: center;
+    outline: none;
+    color: var(--white-color); /* Ensure link color is appropriate for dark bg */
+}
+.footer-icon-link svg {
+    width: 18px;
+    height: 18px;
+    fill: var(--light-text); /* Changed fill color */
+    transition: fill var(--transition-speed-fast) ease;
+    vertical-align: middle;
+}
+.footer-icon-link:hover svg,
+.footer-icon-link:focus svg,
+.footer-icon-link:focus-visible svg {
+    fill: var(--secondary-color); /* Changed hover/focus fill color */
+}
+.footer-icon-link:hover,
+.footer-icon-link:focus-visible {
+    color: var(--secondary-color); /* Ensure link text color changes on hover/focus */
+}
+.footer-tech {
+    font-size: 0.8em; /* Slightly smaller */
+    color: hsl(from var(--light-text) h s calc(l + 5%) / 0.85); /* Slightly lighter/less prominent */
+    opacity: 1; /* Removed old opacity, controlling with color */
+}
+@media (min-width: 576px) {
+    .footer-content {
+        flex-direction: row;
+        justify-content: space-between;
+    }
+    .copyright {
+        justify-content: flex-start;
+    }
+    .footer-tech {
+        text-align: right;
+    }
+}
+/* END FOOTER CSS MODIFICATIONS */
+
 
 /* ================================== */
 /*       Scroll-to-Top Button         */
@@ -858,15 +982,62 @@ footer { text-align: center; padding: 30px 20px; margin-top: 0; color: var(--sub
     .showcase-details-grid { gap: 30px; }
 }
 @media (max-width: 767.98px) {
-    html { font-size: 14px; scroll-padding-top: 20px; }
-    header { height: auto; padding: 15px 0; position: static; transition: box-shadow var(--transition-speed) ease; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07); }
-    header.scrolled { height: auto; box-shadow: 0 2px 6px rgba(0, 0, 0, 0.07); }
-    header.scrolled h1, header.scrolled nav a { font-size: inherit; }
-    header .container { flex-direction: column; text-align: center; }
-    header h1 { margin-bottom: 15px; font-size: 1.7rem; transition: none; }
-    header nav ul { justify-content: center; flex-wrap: wrap; margin-top: 5px; }
-    header nav li { margin: 5px 12px; }
-    header nav a { font-size: 1rem; transition: color var(--transition-speed-fast) ease; }
+    html { font-size: 14px; scroll-padding-top: 20px; } /* Adjusted for static header */
+    
+    /* START HEADER RESPONSIVE MODIFICATIONS */
+    header {
+        height: auto;
+        padding: 20px 0; /* Increased padding */
+        position: static; /* Header becomes static */
+        box-shadow: 0 2px 6px rgba(var(--dark-text-rgb-tuple), 0.07); /* Consistent shadow */
+        background: var(--white-color); /* Explicitly set background */
+    }
+    header.scrolled { /* No visual change needed for scrolled static header beyond initial shadow */
+        height: auto;
+        box-shadow: 0 2px 6px rgba(var(--dark-text-rgb-tuple), 0.07);
+    }
+    header.scrolled h1, header.scrolled nav a {
+        font-size: inherit; /* Reset font size changes for scrolled state */
+    }
+    header .container {
+        flex-direction: column;
+        text-align: center;
+    }
+    header h1 { /* Site Title / Logo */
+        margin-bottom: 12px; /* Adjusted margin */
+        font-size: 1.7rem;
+        transition: none; /* Remove transition for static header elements */
+    }
+    header h1:hover {
+        color: var(--primary-color); /* Keep original color, or a subtle hover if preferred */
+    }
+    header nav ul {
+        justify-content: center;
+        flex-wrap: wrap;
+        margin-top: 5px;
+        gap: 5px 15px; /* Add gap for better spacing */
+    }
+    header nav li {
+        margin: 0; /* Remove individual li margin, use gap on ul */
+    }
+    header nav a {
+        font-size: 1rem;
+        padding: 8px 10px; /* Add some horizontal padding */
+        border-radius: var(--border-radius); /* Add border-radius for touch target feel */
+        transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease;
+    }
+    header nav a::after {
+        display: none; /* Remove underline for mobile */
+    }
+    header nav a:hover,
+    header nav a.active,
+    header nav a:focus-visible { /* Use focus-visible for keyboard */
+        background-color: hsl(from var(--accent-color) h s l / 0.1); /* Subtle background highlight */
+        color: var(--accent-color);
+        text-decoration: none; /* Ensure no underline from default browser styles on active */
+    }
+    /* END HEADER RESPONSIVE MODIFICATIONS */
+
     h1 { font-size: 2.1rem; }
     h2 { font-size: 1.9rem; margin-bottom: 1.5em;}
     .project-category h3 { font-size: 1.5rem; }
@@ -919,7 +1090,9 @@ footer { text-align: center; padding: 30px 20px; margin-top: 0; color: var(--sub
     h2 { font-size: 1.7rem; margin-bottom: 1.2em; }
     h3 { font-size: 1.3rem; }
     .project-category h3 { font-size: 1.3rem; }
-    header nav li { margin: 5px 8px; }
+    header nav li { margin: 0; } /* Already handled by gap in ul */
+    header nav ul { gap: 5px 10px; } /* Adjust gap for very small screens */
+    header nav a { padding: 7px 8px; } /* Slightly adjust padding for smaller links */
     section { padding: 50px 0; margin-bottom: 40px; }
     main section[id]:nth-child(odd) { transform: translateY(30px); transition-duration: 0.5s, 0.6s; }
     main section[id]:nth-child(even) { transform: translateX(-30px); transition-duration: 0.5s, 0.6s; }
@@ -960,6 +1133,18 @@ footer { text-align: center; padding: 30px 20px; margin-top: 0; color: var(--sub
     #contact p, #contact li { font-size: 1rem; }
     #contact ul { gap: 15px; }
     #contact a { padding: 4px 8px; gap: 6px; }
-    footer { padding: 30px 10px; font-size: 0.85rem; }
+    /* START FOOTER RESPONSIVE MODIFICATIONS (Smallest Screens) */
+    footer {
+        padding: 30px 15px; /* Consistent with container padding */
+        font-size: 0.85rem;
+    }
+    .footer-content {
+        gap: 12px; /* Adjust gap for smaller footer */
+    }
+    .copyright, .footer-tech {
+        text-align: center; /* Ensure text is centered if flex items stack */
+        width: 100%;
+    }
+    /* END FOOTER RESPONSIVE MODIFICATIONS (Smallest Screens) */
     .scroll-top-btn { width: 40px; height: 40px; line-height: 40px; font-size: 16px; bottom: 15px; right: 15px; }
 }
