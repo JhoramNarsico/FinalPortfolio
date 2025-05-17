@@ -11,7 +11,7 @@
     --light-bg: #f8f9fa;
     --white-color: #ffffff;
     --content-container-bg: hsl(210, 22%, 96%);
-    --content-container-bg-frost: hsla(210, 22%, 96%, 0.75);
+    --content-container-bg-frost: hsla(210, 22%, 96%, 0.75); /* Used for optional scrolled header */
     --inner-well-bg: hsl(210, 25%, 98%);
     --highlight-bg: rgba(41, 128, 185, 0.15);
 
@@ -99,11 +99,24 @@
     --final-showcase-main-color-hsl-l: 60%;
 }
 
+/* --- Utility Classes --- */
+.sr-only { /* For accessibility */
+    position: absolute;
+    width: 1px;
+    height: 1px;
+    padding: 0;
+    margin: -1px;
+    overflow: hidden;
+    clip: rect(0, 0, 0, 0);
+    white-space: nowrap;
+    border-width: 0;
+}
+
 /* --- Base Styles --- */
 * { box-sizing: border-box; margin: 0; padding: 0; }
 html {
     scroll-behavior: smooth; font-size: 16px;
-    scroll-padding-top: calc(var(--header-height-scrolled) + 30px);
+    /* scroll-padding-top is handled in responsive section for mobile sticky header */
     background: linear-gradient(to bottom, hsl(210, 20%, 98%) 0%, hsl(210, 15%, 95%) 100%);
     background-attachment: fixed;
 }
@@ -114,6 +127,9 @@ body {
     overflow-wrap: break-word; word-wrap: break-word;
     position: relative; overflow-x: hidden; /* Crucial for blobs */
     transition: background-color 0.5s ease-out;
+}
+body.nav-open { /* Prevent body scroll when mobile nav is open */
+    overflow: hidden;
 }
 
 /* === START OF STRONG HIERARCHY FLOATING BLOBS BACKGROUND === */
@@ -227,20 +243,11 @@ section[id] > .container > h2::before {
     display: block;
     width: 24px;  /* Adjust to your icon's desired display size */
     height: 24px; /* Adjust to your icon's desired display size */
-    /*
-      Replace this with YOUR URL-encoded SVG.
-      Make sure your SVG has fill="currentColor" or uses a specific hex code.
-      If using currentColor, the icon will take the 'color' property value.
-      If using a hex code in the SVG, it will always be that color.
-      This example uses a chevron pointing down, with fill set to --secondary-color's hex.
-    */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z' fill='%232980b9'/%3E%3C/svg%3E");
-    /* If your SVG is set to fill="currentColor", you can set the color here: */
-    /* color: var(--secondary-color); */
     background-repeat: no-repeat;
     background-position: center;
-    background-size: contain; /* Or 'cover' or specific dimensions */
-    margin: 0 auto 15px auto; /* Center icon horizontally, margin-bottom for spacing */
+    background-size: contain;
+    margin: 0 auto 15px auto;
 }
 
 /* Decorative line below h2 text, for sections with an ID */
@@ -259,12 +266,11 @@ section[id] > .container > h2::after {
 
 /* Specific overrides for "About Me" section's h2 */
 #about > .container > .about-content > h2 {
-    padding-top: 0; /* No icon above, so reset padding-top */
+    padding-top: 0;
 }
 #about > .container > .about-content > h2::before {
-    display: none; /* Hide the icon */
+    display: none;
 }
-/* Ensure the decorative line is still present for "About Me" h2 */
 #about > .container > .about-content > h2::after {
     content: '';
     display: block;
@@ -292,86 +298,146 @@ header {
     position: sticky;
     top: 0;
     z-index: 1000;
-    box-shadow: 0 2px 8px rgba(var(--dark-text-rgb-tuple), 0.06);
+    box-shadow: 0 1px 3px rgba(var(--dark-text-rgb-tuple), 0.05); /* Softer default shadow */
     height: var(--header-height);
     display: flex;
     align-items: center;
     transition: height var(--transition-speed) ease, box-shadow var(--transition-speed) ease, background-color var(--transition-speed) ease;
 }
+
 header .container {
     display: flex;
     justify-content: space-between;
     align-items: center;
     width: 100%;
 }
+
 header h1 {
     font-size: 1.6rem;
     margin: 0;
     font-weight: 700;
-    color: var(--primary-color);
-    transition: font-size var(--transition-speed) ease, color var(--transition-speed-fast) ease;
     letter-spacing: -0.5px;
+    transition: font-size var(--transition-speed) ease; /* Removed color transition, handled by 'a' */
 }
-header h1:hover {
+header h1 a { /* Make logo text a link */
+    color: var(--primary-color);
+    text-decoration: none;
+    transition: color var(--transition-speed-fast) ease;
+}
+header h1 a:hover {
     color: var(--secondary-color);
 }
 
-header nav ul {
+/* Desktop Navigation */
+header .nav-primary ul {
     list-style: none;
-    display: flex;
+    display: flex; /* Hidden on mobile, shown on desktop via media query */
     margin: 0;
     padding: 0;
 }
-header nav li {
-    margin-left: 40px;
+
+header .nav-primary li {
+    margin-left: 35px; /* Slightly reduced margin */
 }
-header nav a {
+
+header .nav-primary a {
     color: var(--dark-text);
     font-weight: 500;
     font-size: 0.95rem;
-    padding: 8px 0;
+    padding: 10px 5px; /* Adjusted padding */
     position: relative;
     transition: color var(--transition-speed-fast) ease;
     outline: none;
+    border-radius: 4px; /* For focus-visible outline consistency */
 }
-header nav a::after {
+
+/* Underline hover/active effect for desktop */
+header .nav-primary a::after {
     content: '';
     position: absolute;
     width: 0;
     height: 2.5px;
-    bottom: -5px;
-    left: 0;
+    bottom: -2px; /* Adjusted position */
+    left: 50%;
+    transform: translateX(-50%);
     background-color: var(--accent-color);
     transition: width var(--transition-speed) ease;
 }
-header nav a:hover,
-header nav a:focus-visible,
-header nav a.active {
+header .nav-primary a:hover,
+header .nav-primary a:focus-visible,
+header .nav-primary a.active {
     color: var(--accent-color);
 }
-header nav a:hover::after,
-header nav a:focus-visible::after,
-header nav a.active::after {
-    width: 100%;
-}
-header nav a:focus {
-    color: var(--accent-color);
-}
-header nav a:focus::after {
-    width: 100%;
+header .nav-primary a:hover::after,
+header .nav-primary a:focus-visible::after,
+header .nav-primary a.active::after {
+    width: 80%; /* Slightly less than 100% for a more refined look */
 }
 
-
+/* Scrolled State (Desktop & Mobile Sticky Header) */
 header.scrolled {
     height: var(--header-height-scrolled);
-    box-shadow: 0 3px 12px rgba(var(--dark-text-rgb-tuple), 0.08);
-    background: var(--white-color);
+    box-shadow: 0 2px 6px rgba(var(--dark-text-rgb-tuple), 0.07); /* Slightly stronger scrolled shadow */
+    
+    /* Optional: Change background slightly on scroll for a frosted glass effect */
+    /* background: var(--content-container-bg-frost); */
+    /* backdrop-filter: blur(5px); -webkit-backdrop-filter: blur(5px); */
 }
+
 header.scrolled h1 {
     font-size: 1.5rem;
 }
-header.scrolled nav a {
+
+header.scrolled .nav-primary a { /* Desktop scrolled nav link style */
     font-size: 0.9rem;
+    padding: 8px 5px; /* Adjust padding for scrolled state */
+}
+
+/* Hamburger Toggle - Hidden on Desktop by default */
+.nav-toggle {
+    display: none; /* Shown on mobile via media query */
+    background: transparent;
+    border: none;
+    cursor: pointer;
+    padding: 0.5em;
+    z-index: 1001; /* Above nav content */
+}
+
+.hamburger-icon {
+    display: block;
+    position: relative;
+    width: 24px; /* Width of hamburger lines */
+    height: 2px;  /* Thickness of hamburger lines */
+    background-color: var(--primary-color);
+    transition: transform var(--transition-speed-fast) ease-in-out,
+                background-color var(--transition-speed-fast) ease-in-out;
+}
+.hamburger-icon::before,
+.hamburger-icon::after {
+    content: '';
+    position: absolute;
+    left: 0;
+    width: 100%;
+    height: 2px;
+    background-color: var(--primary-color);
+    transition: transform var(--transition-speed-fast) ease-in-out,
+                top var(--transition-speed-fast) ease-in-out,
+                opacity var(--transition-speed-fast) ease-in-out;
+}
+.hamburger-icon::before { top: -7px; } /* Space between lines */
+.hamburger-icon::after { top: 7px; }
+
+/* Hamburger animation when active (body.nav-open) */
+body.nav-open .hamburger-icon {
+    background-color: transparent; /* Middle line disappears */
+}
+body.nav-open .hamburger-icon::before {
+    transform: rotate(45deg);
+    top: 0;
+}
+body.nav-open .hamburger-icon::after {
+    transform: rotate(-45deg);
+    top: 0;
 }
 
 
@@ -1036,6 +1102,7 @@ footer {
 /*       Responsive Design            */
 /* ================================== */
 @media (min-width: 768px) { .showcase-details-grid { grid-template-columns: 1fr 1fr; gap: 30px; } }
+
 @media (max-width: 991.98px) {
     html { font-size: 15px; scroll-padding-top: calc(var(--header-height-scrolled) + 20px); }
     .container { max-width: 920px; padding: 0 20px; }
@@ -1058,61 +1125,92 @@ footer {
     .showcase-highlight-block { max-width: 90%; padding: 20px; }
     .showcase-details-grid { gap: 30px; }
 }
+
 @media (max-width: 767.98px) {
-    html { font-size: 14px; scroll-padding-top: 20px; }
+    html {
+        font-size: 14px;
+        /* Ensure scroll padding accounts for sticky mobile header height */
+        scroll-padding-top: calc(var(--header-height-scrolled) + 10px); /* Use scrolled height as mobile header is also sticky */
+    }
     
+    /* --- Mobile Header Adjustments --- */
     header {
-        height: auto;
-        padding: 20px 0;
-        position: static;
-        box-shadow: 0 2px 6px rgba(var(--dark-text-rgb-tuple), 0.07);
-        background: var(--white-color);
-    }
-    header.scrolled {
-        height: auto;
-        box-shadow: 0 2px 6px rgba(var(--dark-text-rgb-tuple), 0.07);
-    }
-    header.scrolled h1, header.scrolled nav a {
-        font-size: inherit;
+        /* Mobile header is now sticky. Scrolled styles will apply. */
+        /* height: var(--header-height); /* Or a specific mobile header height if different */
+        padding: 0 15px; /* Align with container padding on mobile */
     }
     header .container {
-        flex-direction: column;
-        text-align: center;
+        padding: 0; /* Remove container padding if header has its own, for full-width alignment */
     }
-    header h1 {
-        margin-bottom: 12px;
-        font-size: 1.7rem;
-        transition: none;
+
+    /* Display Hamburger Toggle */
+    .nav-toggle {
+        display: block; /* Show hamburger on mobile */
     }
-    header h1:hover {
-        color: var(--primary-color);
+    
+    /* Mobile Navigation Menu (Slide-in) */
+    header .nav-primary {
+        position: fixed; /* Fixed position for overlay effect */
+        top: 0; /* Align to top */
+        right: 0; /* Align to right for slide-in from right */
+        bottom: 0; /* Full height */
+        width: min(75vw, 300px); /* Responsive width, max 300px */
+        background: var(--white-color);
+        box-shadow: -2px 0 10px rgba(var(--dark-text-rgb-tuple), 0.1);
+        transform: translateX(100%); /* Initially off-screen to the right */
+        transition: transform var(--transition-speed) cubic-bezier(0.77, 0, 0.175, 1);
+        padding-top: calc(var(--header-height) + 20px); /* Space for header to show above */
+        z-index: 999; /* Below toggle button, above main content */
+        overflow-y: auto; /* Allow scrolling if nav items exceed height */
     }
-    header nav ul {
-        justify-content: center;
-        flex-wrap: wrap;
-        margin-top: 5px;
-        gap: 5px 15px;
+    body.nav-open header .nav-primary {
+        transform: translateX(0); /* Slide in when nav is open */
     }
-    header nav li {
-        margin: 0;
+
+    header .nav-primary ul {
+        flex-direction: column; /* Stack nav items vertically */
+        align-items: center; /* Center align text in nav items */
+        padding: 20px;
+        gap: 15px; /* Space between nav items */
     }
-    header nav a {
-        font-size: 1rem;
-        padding: 8px 10px;
+
+    header .nav-primary li {
+        margin-left: 0; /* Reset desktop margin */
+        width: 100%; /* Make list items full width */
+    }
+
+    header .nav-primary a {
+        display: block; /* Make links full-width for easier tapping */
+        padding: 12px 15px;
+        font-size: 1.1rem; /* Larger font for mobile menu */
+        text-align: center; /* Or left, as preferred */
         border-radius: var(--border-radius);
         transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease;
     }
-    header nav a::after {
-        display: none;
+    header .nav-primary a::after {
+        display: none; /* No underline in mobile menu */
     }
-    header nav a:hover,
-    header nav a.active,
-    header nav a:focus-visible {
+
+    header .nav-primary a:hover,
+    header .nav-primary a.active,
+    header .nav-primary a:focus-visible { /* Consistent hover/active style */
         background-color: hsl(from var(--accent-color) h s l / 0.1);
         color: var(--accent-color);
-        text-decoration: none;
     }
     
+    /* Scrolled state for mobile header (if height changes) */
+    header.scrolled {
+         height: var(--header-height-scrolled); /* This will now apply on mobile */
+    }
+    header.scrolled h1 {
+        font-size: 1.5rem; /* Ensure this is desired for mobile scrolled state */
+    }
+    /* Adjust mobile nav padding if header height changes on scroll */
+    body.nav-open header.scrolled .nav-primary {
+        padding-top: calc(var(--header-height-scrolled) + 20px);
+    }
+    /* END Mobile Header Adjustments */
+
     h1 { font-size: 2.1rem; }
     
     h2 {
@@ -1169,7 +1267,7 @@ footer {
 @media (max-width: 575.98px) {
     html { font-size: 13.5px; }
     body { line-height: 1.65; }
-    .container { padding: 0 15px; }
+    .container { padding: 0 15px; } /* Match header padding */
     h1 { font-size: 1.9rem; }
 
     h2 {
@@ -1183,9 +1281,12 @@ footer {
 
     h3 { font-size: 1.3rem; }
     .project-category h3 { font-size: 1.3rem; }
-    header nav li { margin: 0; }
-    header nav ul { gap: 5px 10px; }
-    header nav a { padding: 7px 8px; }
+
+    /* Mobile Nav links at smallest screens */
+    /* header .nav-primary li { margin: 0; } /* Already handled */
+    /* header .nav-primary ul { gap: 5px 10px; } /* Already handled by vertical stacking */
+    header .nav-primary a { padding: 10px 12px; font-size: 1rem; } /* Slightly smaller padding/font */
+
     section { padding: 50px 0; margin-bottom: 40px; }
     main section[id]:nth-child(odd) { transform: translateY(30px); transition-duration: 0.5s, 0.6s; }
     main section[id]:nth-child(even) { transform: translateX(-30px); transition-duration: 0.5s, 0.6s; }

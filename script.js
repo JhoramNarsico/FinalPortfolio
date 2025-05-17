@@ -1,5 +1,3 @@
-// --- SCRIPT.JS (inside DOMContentLoaded) ---
-
 document.addEventListener('DOMContentLoaded', () => {
     console.log("Portfolio script loaded and DOM fully parsed.");
 
@@ -8,11 +6,15 @@ document.addEventListener('DOMContentLoaded', () => {
     const root = document.documentElement;
     const header = document.querySelector('header');
     const sections = document.querySelectorAll('main section[id]');
-    const navLinks = document.querySelectorAll('header nav a');
+    const navLinks = document.querySelectorAll('header .nav-primary a'); // Updated selector
     const scrollTopBtn = document.getElementById('scrollTopBtn');
     const projectItems = document.querySelectorAll('.project-item');
     const projectCategories = document.querySelectorAll('.project-category');
     const finalShowcaseSection = document.querySelector('.final-project-showcase');
+
+    // --- Hamburger Menu Elements ---
+    const navToggle = document.querySelector('.nav-toggle');
+    const primaryNav = document.querySelector('.nav-primary');
 
     let currentBlobThemeClass = '';
     let currentActiveProjectCategoryKey = null;
@@ -85,7 +87,7 @@ document.addEventListener('DOMContentLoaded', () => {
         let currentSectionId = '';
         const scrollY = window.scrollY;
         const viewportHeight = window.innerHeight;
-        const headerHeight = header ? header.offsetHeight : 70;
+        const headerHeight = header ? header.offsetHeight : (parseFloat(getCssVar('--header-height-scrolled')) || 60) ; // Use scrolled height as base
         const activationPoint = scrollY + headerHeight + (viewportHeight - headerHeight) * 0.4;
         let bestMatch = { id: '', distance: Infinity };
 
@@ -126,7 +128,7 @@ document.addEventListener('DOMContentLoaded', () => {
             currentActiveProjectCategoryKey = null;
         } else if (currentSectionId === 'projects') {
              if (!currentActiveProjectCategoryKey) {
-                 const c = blobColorSchemes.prelim;
+                 const c = blobColorSchemes.prelim; // Default to prelim if no specific project category is active
                  setActiveBlobColors(c.h1, c.s1, c.l1, c.h2, c.s2, c.l2);
             }
         } else {
@@ -141,7 +143,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const projectElementsToObserve = [...projectCategories, finalShowcaseSection].filter(el => el);
         const projectBlobObserverOptions = { root: null, rootMargin: '0px 0px -40% 0px', threshold: 0.1, };
         const projectBlobObserver = new IntersectionObserver((entries) => {
-            if (!body.classList.contains('blob-theme-projects')) return;
+            if (!body.classList.contains('blob-theme-projects')) return; // Only act if in #projects section
             let topIntersectingEntry = null;
             entries.forEach(entry => {
                  if (entry.isIntersecting) {
@@ -167,6 +169,7 @@ document.addEventListener('DOMContentLoaded', () => {
                     if (c) {
                         setActiveBlobColors(c.h1, c.s1, c.l1, c.h2, c.s2, c.l2);
                         currentActiveProjectCategoryKey = newActiveKey;
+                        console.log("Blob colors updated for project category:", newActiveKey);
                     }
                 }
             }
@@ -174,14 +177,46 @@ document.addEventListener('DOMContentLoaded', () => {
         projectElementsToObserve.forEach(el => projectBlobObserver.observe(el));
     }
 
+    // --- Hamburger Menu Toggle Functionality ---
+    if (navToggle && primaryNav) {
+        navToggle.addEventListener('click', () => {
+            // const isVisible = primaryNav.getAttribute('data-visible') === 'true'; // Using class on body now
+            const isNavOpen = body.classList.contains('nav-open');
+
+            if (isNavOpen) {
+                // primaryNav.setAttribute('data-visible', 'false');
+                navToggle.setAttribute('aria-expanded', 'false');
+                body.classList.remove('nav-open');
+            } else {
+                // primaryNav.setAttribute('data-visible', 'true');
+                navToggle.setAttribute('aria-expanded', 'true');
+                body.classList.add('nav-open');
+            }
+        });
+
+        // Close mobile nav when a link is clicked
+        primaryNav.querySelectorAll('a').forEach(link => {
+            link.addEventListener('click', () => {
+                if (body.classList.contains('nav-open')) {
+                    // primaryNav.setAttribute('data-visible', 'false');
+                    navToggle.setAttribute('aria-expanded', 'false');
+                    body.classList.remove('nav-open');
+                }
+            });
+        });
+    }
+
+
     // --- Header Transformation on Scroll ---
     const handleHeaderScroll = () => {
         if (!header) return;
-        if (window.matchMedia("(max-width: 767.98px)").matches) {
-             header.classList.remove('scrolled'); return;
+        // The 'scrolled' class now applies on mobile too, as mobile header is sticky.
+        // No need for window.matchMedia check here anymore for this specific functionality.
+        if (window.scrollY > 50) {
+            header.classList.add('scrolled');
+        } else {
+            header.classList.remove('scrolled');
         }
-        if (window.scrollY > 50) header.classList.add('scrolled');
-        else header.classList.remove('scrolled');
     };
 
     // --- Scroll-to-Top Button Visibility ---
@@ -201,8 +236,13 @@ document.addEventListener('DOMContentLoaded', () => {
     // --- Add Event Listeners ---
     window.addEventListener('scroll', onScroll);
     window.addEventListener('resize', debounce(() => {
-        handleHeaderScroll();
-        highlightNavLinkAndSectionBlobs();
+        handleHeaderScroll(); // Recalculate header style on resize (e.g., if it becomes non-sticky)
+        highlightNavLinkAndSectionBlobs(); // Recheck active section
+        // Close mobile nav on resize to larger screen if it's open
+        if (window.innerWidth > 767.98 && body.classList.contains('nav-open')) {
+            body.classList.remove('nav-open');
+            navToggle.setAttribute('aria-expanded', 'false');
+        }
     }, 50));
 
     // --- Initial Calls ---
@@ -221,29 +261,34 @@ document.addEventListener('DOMContentLoaded', () => {
                     entry.target.style.setProperty('--card-delay', `${0.3 + (itemIndex++ % 10) * 0.1}s`);
                     entry.target.classList.add('is-visible');
                     processedItems.add(entry.target);
+                    // projectItemObserver.unobserve(entry.target); // Optional: unobserve after visible
                 }
             });
         }, projectItemObserverOptions);
         projectItems.forEach(item => projectItemObserver.observe(item));
-    } else {
+    } else { // Fallback for older browsers
         projectItems.forEach(item => { item.style.setProperty('--card-delay', '0.3s'); item.classList.add('is-visible'); });
     }
 
     // --- Section Entrance Animation ---
     if ('IntersectionObserver' in window && sections.length > 0) {
-         const sectionObserverOptions = { root: null, rootMargin: '0px 0px -15% 0px', threshold: 0 };
-        const sectionObserver = new IntersectionObserver((entries) => {
+         const sectionObserverOptions = { root: null, rootMargin: '0px 0px -15% 0px', threshold: 0 }; // Trigger when 15% from bottom is visible
+        const sectionObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('section-is-visible');
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('section-is-visible');
+                    // observer.unobserve(entry.target); // Optional: unobserve after first intersection
+                }
             });
         }, sectionObserverOptions);
         sections.forEach(section => {
-            sectionObserver.observe(section);
+            // Pre-check for sections already in view on load
             if (section.getBoundingClientRect().top < window.innerHeight * 0.85 && section.getBoundingClientRect().bottom > 0) {
                 section.classList.add('section-is-visible');
             }
+            sectionObserver.observe(section);
         });
-    } else {
+    } else { // Fallback
         sections.forEach(section => section.classList.add('section-is-visible'));
     }
 
@@ -270,23 +315,29 @@ document.addEventListener('DOMContentLoaded', () => {
                         }
                     };
                     target.addEventListener('transitionend', handleTransitionEnd);
+                    // observer.unobserve(target); // Optional
                 }
             });
         }, { root: null, threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
         showcaseContentObserver.observe(finalShowcaseContentAnimator);
-    } else if (finalShowcaseContentAnimator) {
+    } else if (finalShowcaseContentAnimator) { // Fallback
         finalShowcaseContentAnimator.classList.add('is-showcasing', 'animate-showcase-children');
     }
 
     // Showcase Icon animation
     const highlightBlock = document.querySelector('.showcase-highlight-block');
     if (highlightBlock && 'IntersectionObserver' in window) {
-         const iconObserver = new IntersectionObserver((entries) => {
+         const iconObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
-                if (entry.isIntersecting) entry.target.classList.add('icon-animate-in');
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('icon-animate-in');
+                    // observer.unobserve(entry.target); // Optional
+                }
             });
         }, { root: null, threshold: 0.2 });
         iconObserver.observe(highlightBlock);
+    } else if (highlightBlock) { // Fallback
+        highlightBlock.classList.add('icon-animate-in');
     }
 
 
@@ -294,10 +345,10 @@ document.addEventListener('DOMContentLoaded', () => {
     const initializeProjectItemStyles = () => {
         // Define base HSL colors for item background tints
         const itemTintColors = {
-            'tag-html': { base: 'hsl(13, 78%, 58%)' },
-            'tag-css': { base: 'hsl(207, 79%, 41%)'},
-            'tag-js': { base: 'hsl(53, 87%, 60%)' },
-            'tag-php': { base: 'hsl(257, 85%, 65%)'}
+            'tag-html': { base: 'hsl(13, 78%, 58%)' }, // Approx for #e34f26
+            'tag-css': { base: 'hsl(207, 79%, 41%)'}, // Approx for #1572b6
+            'tag-js': { base: 'hsl(53, 87%, 60%)' },  // Approx for #f0db4f
+            'tag-php': { base: 'hsl(257, 85%, 65%)'}  // Approx for #7f4ff0 (made it more vibrant)
         };
 
         projectItems.forEach(item => {
@@ -317,6 +368,7 @@ document.addEventListener('DOMContentLoaded', () => {
             const htmlCount = categoryCounts['tag-html'];
             const cssCount = categoryCounts['tag-css'];
 
+            // Prioritize JS/PHP, then HTML/CSS
             if (jsCount > 0 || phpCount > 0) {
                 if (jsCount >= phpCount) actualDominantTagClassForItem = 'tag-js';
                 else actualDominantTagClassForItem = 'tag-php';
@@ -330,12 +382,22 @@ document.addEventListener('DOMContentLoaded', () => {
             const parentCategory = item.closest('.project-category');
             if (parentCategory) {
                 const categoryId = parentCategory.dataset.categoryId;
-                if (categoryId === 'midterm-finals') {
-                    harmonizationDominantTagClass = 'tag-css'; // Force CSS blue for items in this section
+                if (categoryId === 'midterm-finals') { // Midterm-Finals projects are primarily CSS/JS/PHP themed
+                    // If actual dominant is HTML in a JS/PHP section, prefer JS or PHP for tint
+                    if (actualDominantTagClassForItem === 'tag-html' && (jsCount > 0 || phpCount > 0)) {
+                        harmonizationDominantTagClass = jsCount >= phpCount ? 'tag-js' : 'tag-php';
+                    } else if (actualDominantTagClassForItem === 'tag-html') { // if only html/css tags present
+                         harmonizationDominantTagClass = 'tag-css'; // fallback to CSS blue
+                    } else {
+                        harmonizationDominantTagClass = actualDominantTagClassForItem; // stick to actual JS or PHP
+                    }
+                } else if (categoryId === 'prelim') { // Prelim projects are HTML/CSS themed
+                    if (actualDominantTagClassForItem === 'tag-js' || actualDominantTagClassForItem === 'tag-php') {
+                         harmonizationDominantTagClass = 'tag-html'; // force HTML red
+                    } else {
+                        harmonizationDominantTagClass = actualDominantTagClassForItem; // stick to actual HTML or CSS
+                    }
                 }
-                // else if (categoryId === 'prelim') { // Optional: force HTML red for prelim
-                //     harmonizationDominantTagClass = 'tag-html';
-                // }
             }
 
             // Use the determined harmonization tag (or fallback to actual) for tint, border, and text colors
@@ -348,11 +410,18 @@ document.addEventListener('DOMContentLoaded', () => {
                 if (hslMatch) {
                     item.style.setProperty('--project-dominant-hue', hslMatch[1]);
                     item.style.setProperty('--project-dominant-saturation', hslMatch[2] + '%');
-                    item.style.setProperty('--project-dominant-lightness', hslMatch[3] + '%');
+                    // For tint, use a higher lightness value than the base color
+                    let tintLightness = parseFloat(hslMatch[3]);
+                    tintLightness = Math.min(96, tintLightness + (100 - tintLightness) * 0.8); // Make it significantly lighter for a tint
+                    item.style.setProperty('--project-dominant-lightness', tintLightness + '%');
                     item.classList.add('project-item--has-dominant-color');
                 }
             } else {
                 item.classList.remove('project-item--has-dominant-color');
+                 // Reset to default if no effective tag found
+                item.style.setProperty('--project-dominant-hue', getCssVar('--default-blob-hue1'));
+                item.style.setProperty('--project-dominant-saturation', getCssVar('--default-blob-sat1'));
+                item.style.setProperty('--project-dominant-lightness', getCssVar('--default-blob-light1'));
             }
 
             // 4. Apply Hover Border Color Style (using effective dominant tag)
@@ -365,7 +434,11 @@ document.addEventListener('DOMContentLoaded', () => {
 
             item.style.setProperty('--project-item-dominant-main-color', dominantMainColor);
             item.style.setProperty('--project-item-dominant-contrast-text-color', dominantContrastTextColor);
-            item.style.setProperty('--project-item-title-text-color', dominantMainColor);
+            
+            // Title color: use the dominant main color or fallback to primary if very light
+            const isLightDominant = ['tag-js'].includes(effectiveDominantTag); // JS yellow is light
+            item.style.setProperty('--project-item-title-text-color', isLightDominant ? getCssVar('--primary-color') : dominantMainColor);
+
         });
         console.log("Project item card tinting, hover borders, and text harmonization initialized/updated.");
     };
