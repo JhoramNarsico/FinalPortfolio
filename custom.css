@@ -97,6 +97,13 @@
     --final-showcase-main-color-hsl-h: 53;
     --final-showcase-main-color-hsl-s: 87%;
     --final-showcase-main-color-hsl-l: 60%;
+
+    /* --- CSS Blue Color Values (for Midterm/Finals Theme) --- */
+    --css-blue-color: #1572b6; /* hsl(207, 79%, 41%) */
+    --css-blue-darker-text: hsl(207, 79%, 35%);
+    --css-blue-light-tint-bg: hsla(207, 79%, 41%, 0.12);
+    --css-blue-tag-tint-bg: hsla(207, 79%, 41%, 0.2);
+    --css-blue-shadow-color: hsla(207, 79%, 41%, 0.3);
 }
 
 /* --- Utility Classes --- */
@@ -745,6 +752,45 @@ strong, .skill-highlight {
     background-color: #7f4ff0; color: var(--white-color);
     transform: translateY(-2px) scale(1.03); box-shadow: 0 2px 4px rgba(127, 79, 240, 0.3);
 }
+
+
+/* ======================================================================== */
+/* === Specific Overrides for Midterm/Finals Category (Blue Themed) === */
+/* ======================================================================== */
+
+/* Force blue hover border for items in the Midterm/Finals category */
+.project-category[data-category-id="midterm-finals"] .project-item:hover {
+    border-color: var(--css-blue-color);
+}
+
+/* Project Timeline in Midterm/Finals category */
+.project-category[data-category-id="midterm-finals"] .project-item .project-timeline {
+    color: var(--css-blue-darker-text);
+    background-color: var(--css-blue-light-tint-bg);
+}
+
+/* Project Title Link (H4 a) Hover/Focus in Midterm/Finals category */
+.project-category[data-category-id="midterm-finals"] .project-item:hover .project-details h4 a,
+.project-category[data-category-id="midterm-finals"] .project-item .project-details h4 a:focus,
+.project-category[data-category-id="midterm-finals"] .project-item .project-details h4 a:focus-visible {
+    color: var(--css-blue-color);
+}
+
+/* Generic Tags in Midterm/Finals category */
+.project-category[data-category-id="midterm-finals"] .project-item .tag:not(.tag-html):not(.tag-css):not(.tag-js):not(.tag-php) {
+    background-color: var(--css-blue-tag-tint-bg);
+    color: var(--css-blue-color);
+}
+.project-category[data-category-id="midterm-finals"] .project-item:hover .tag:not(.tag-html):not(.tag-css):not(.tag-js):not(.tag-php),
+.project-category[data-category-id="midterm-finals"] .project-item .tag:not(.tag-html):not(.tag-css):not(.tag-js):not(.tag-php):hover,
+.project-category[data-category-id="midterm-finals"] .project-item .tag:not(.tag-html):not(.tag-css):not(.tag-js):not(.tag-php):focus,
+.project-category[data-category-id="midterm-finals"] .project-item .tag:not(.tag-html):not(.tag-css):not(.tag-js):not(.tag-php):focus-visible {
+    background-color: var(--css-blue-color);
+    color: var(--white-color);
+    box-shadow: 0 2px 4px var(--css-blue-shadow-color);
+}
+/* === End of Specific Overrides for Midterm/Finals Category === */
+
 
 .js-focused-category .project-item { border-left: 3px solid var(--secondary-color); padding-left: 22px; }
 .js-focused-category .project-list > .project-item:nth-child(even) {
