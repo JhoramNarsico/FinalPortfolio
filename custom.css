@@ -114,11 +114,9 @@
     --glass-hover-border-color: hsla(215, 20%, 85%, 0.4);
     --glass-hover-shadow: 0 10px 38px rgba(var(--primary-color-rgb-tuple), 0.12);
 
-    /* --- Final Showcase Parallax Variables (Set by JS) --- */
+    /* --- Final Showcase Parallax Variables (Set by JS for ::after, content handled directly by JS) --- */
     --parallax-after-x: 0px;
     --parallax-after-y: 0px;
-    --parallax-content-x: 0px;
-    --parallax-content-y: 0px;
 }
 
 /* --- Utility Classes --- */
@@ -244,41 +242,42 @@ h2 {
     font-size: 2.2rem; font-weight: 700; color: var(--primary-color); text-align: center; position: relative;
     margin-bottom: 2.5em; padding-bottom: 25px; padding-top: 40px;
 }
-section[id] > .container > h2::before {
+section[id] > .container > h2:not(.contact-heading)::before {
     content: ''; display: block; width: 24px; height: 24px;
-    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24'%3E%3Cpath d='M7.41 8.59L12 13.17l4.59-4.58L18 10l-6 6-6-6 1.41-1.41z' fill='%232980b9'/%3E%3C/svg%3E");
+    /* Updated SVG Icon */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232980b9'%3E%3Cpath d='M12 5.83l2.46 2.46c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L12.7 3.7a.9959.9959 0 00-1.41 0L8.12 6.88c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 5.83zm0 12.34l-2.46-2.46a.9959.9959 0 00-1.41 0c-.39.39-.39 1.02 0 1.41l3.17 3.17c.39.39 1.02.39 1.41 0l3.17-3.17c.39-.39.39-1.02 0-1.41a.9959.9959 0 00-1.41 0L12 18.17z'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: center; background-size: contain;
     margin: 0 auto 15px auto;
-    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Updated transition */
 }
-section[id] > .container > h2:hover::before {
-    transform: translateY(-3px) scale(1.1) rotate(5deg);
+section[id] > .container > h2:not(.contact-heading):hover::before {
+    transform: translateY(-2px) scale(1.2) rotate(10deg); /* Updated hover transform */
 }
-section[id] > .container > h2::after {
+section[id] > .container > h2:not(.contact-heading)::after {
     content: ''; display: block; width: 70px; height: 3px; background-color: var(--accent-color);
     border-radius: 2px; position: absolute; bottom: 0; left: 50%;
     transform: translateX(-50%) scaleX(1);
     transform-origin: center;
-    transition: width var(--transition-speed) ease-out,
+    /* Updated transition */
+    transition: width var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55),
                 background-color var(--transition-speed) ease-out,
-                transform var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transform var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
-section[id] > .container > h2:hover::after {
+section[id] > .container > h2:not(.contact-heading):hover::after {
     width: 100px;
     background-color: var(--secondary-color);
-    transform: translateX(-50%) scaleX(1.15);
+    transform: translateX(-50%) scaleX(1.2); /* Updated hover transform */
 }
 
 #about > .container > .about-content > h2 { padding-top: 0; }
-#about > .container > .about-content > h2::before { display: none; }
 #about > .container > .about-content > h2::after {
     content: ''; display: block; width: 70px; height: 3px; background-color: var(--accent-color);
     border-radius: 2px; position: absolute; bottom: 0; left: 50%;
     transform: translateX(-50%) scaleX(1);
     transform-origin: center;
-    transition: width var(--transition-speed) ease-out,
+    transition: width var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55),
                 background-color var(--transition-speed) ease-out,
-                transform var(--transition-speed) cubic-bezier(0.175, 0.885, 0.32, 1.275);
+                transform var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 #about > .container > .about-content > h2:hover::after {
     width: 100px;
@@ -337,7 +336,7 @@ header h1 a:hover {
     transform: scale(1.02);
 }
 
-/* Hero Title Letter Animation (JS controlled) */
+/* Hero Title Letter Animation (JS controlled) - Main Header Title */
 header h1 a.title-animated {
     perspective: 400px;
 }
@@ -602,29 +601,69 @@ strong, .skill-highlight {
 /* ================================== */
 #projects { padding-top: 80px; padding-bottom: 60px; }
 .project-category { margin-bottom: 30px; }
+
+/* === Base styling for project category H3 === */
 .project-category h3 {
-    text-align: center; margin-bottom: 40px; color: var(--primary-color); position: relative;
-    padding-bottom: 20px; font-size: 1.6rem; font-weight: 600; letter-spacing: 0.5px;
+    text-align: center;
+    margin-bottom: 40px;
+    color: var(--primary-color);
+    position: relative;
+    padding-bottom: 20px;
+    font-size: 1.6rem;
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    /* min-height: 1.5em; */ /* Optional: if JS placeholder causes issues, but likely not needed */
 }
 .project-category h3::after {
-    content: ''; position: absolute; width: 80px; height: 2px; bottom: 0; left: 50%; transform: translateX(-50%);
+    content: '';
+    position: absolute;
+    width: 80px;
+    height: 2px;
+    bottom: 0;
+    left: 50%;
+    transform: translateX(-50%);
     background-color: var(--secondary-color);
 }
+
+/* --- Staggered Letter Animation for H3 Category Headings (JS Controlled) --- */
+.project-category > h3 .char-animated-subheader {
+    display: inline-block;
+    opacity: 0;
+    transform: translateY(15px) scale(0.8) rotateX(-45deg);
+    transform-origin: bottom center;
+    will-change: transform, opacity;
+}
+.project-category > h3.is-animating-letters .char-animated-subheader {
+    animation: revealSubheaderCharKeyframe 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
+}
+@keyframes revealSubheaderCharKeyframe {
+    0% {
+        opacity: 0;
+        transform: translateY(15px) scale(0.8) rotateX(-45deg);
+    }
+    100% {
+        opacity: 1;
+        transform: translateY(0) scale(1) rotateX(0deg);
+    }
+}
+/* --- End of Staggered Letter Animation for H3 --- */
+
+
 .category-divider { border: none; height: 1px; background-color: var(--border-color); opacity: 0.5; margin: 60px auto 50px auto; max-width: 70%; }
 .project-list { display: flex; flex-direction: column; gap: 45px; list-style: none; padding: 0; margin: 0; }
 
 .project-item {
     display: flex; gap: 30px; padding: 25px; border-radius: var(--border-radius);
-    background-color: var(--content-container-bg); border: 1px solid var(--border-color);
+    background-color: var(--content-container-bg); border: 1px solid var(--border-color); /* Start with 1px border */
     box-shadow: var(--card-shadow); opacity: 0;
     transition: background-color var(--transition-speed) ease,
                 background-image var(--transition-speed) ease,
                 border-color var(--transition-speed-fast) ease,
-                border-width var(--transition-speed-fast) ease,
+                /* border-width var(--transition-speed-fast) ease, */ /* Removed border-width from transition */
                 opacity 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) var(--card-delay, 0.3s),
                 transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
                 box-shadow var(--transition-speed) ease;
-    will-change: opacity, transform, box-shadow, background-color, background-image, border-color, border-width;
+    will-change: opacity, transform, box-shadow, background-color, background-image, border-color;
     overflow: hidden; position: relative; align-items: stretch;
 }
 .project-item.is-visible { opacity: 1; }
@@ -638,8 +677,8 @@ strong, .skill-highlight {
 .project-item:hover {
     transform: scale(var(--project-item-hover-scale)) translateY(-5px);
     border-color: var(--item-dominant-hover-color, var(--secondary-color));
-    border-width: 2px;
-    box-shadow: var(--card-hover-shadow);
+    /* border-width: 2px; */ /* Removed: using box-shadow for thicker border effect */
+    box-shadow: var(--card-hover-shadow), 0 0 0 1px var(--item-dominant-hover-color, var(--secondary-color)); /* Added for border effect */
 }
 
 .project-item .project-image-container {
@@ -752,13 +791,17 @@ strong, .skill-highlight {
     transform: translateY(-2px) scale(1.03); box-shadow: 0 2px 4px rgba(127, 79, 240, 0.3);
 }
 
-.project-category[data-category-id="midterm-finals"] .project-item:hover { border-color: var(--css-blue-color); }
+.project-category[data-category-id="midterm-finals"] .project-item:hover {
+    border-color: var(--css-blue-color);
+    box-shadow: var(--card-hover-shadow), 0 0 0 1px var(--css-blue-color);
+}
 .project-category[data-category-id="midterm-finals"] .project-item .project-timeline {
     color: var(--css-blue-darker-text); background-color: var(--css-blue-light-tint-bg);
 }
 .project-category[data-category-id="midterm-finals"] .project-item:hover .project-details h4 a,
 .project-category[data-category-id="midterm-finals"] .project-item .project-details h4 a:focus,
 .project-category[data-category-id="midterm-finals"] .project-item .project-details h4 a:focus-visible { color: var(--css-blue-color); }
+
 .project-category[data-category-id="midterm-finals"] .project-item .tag:not(.tag-html):not(.tag-css):not(.tag-js):not(.tag-php) {
     background-color: var(--css-blue-tag-tint-bg); color: var(--css-blue-color);
 }
@@ -849,10 +892,17 @@ strong, .skill-highlight {
 .showcase-highlight-block p,
 .showcase-highlight-block .project-tags {
     opacity: 0; transform: translateY(15px);
-    transition: opacity 0.5s ease-out, transform 0.5s ease-out;
+    transition: opacity 0.5s ease-out, transform 0.5s ease-out; /* Base for elements */
     will-change: opacity, transform;
 }
-.showcase-highlight-block:hover h4,
+/* Parallax for h4, p, tags handled by JS by directly setting transform, so CSS transform transition needs to be faster or linear */
+.showcase-highlight-block h4,
+.showcase-highlight-block p,
+.showcase-highlight-block .project-tags {
+    transition: opacity 0.5s ease-out, transform 0.1s linear; /* Faster transform for smoother parallax */
+}
+
+.showcase-highlight-block:hover h4, /* For initial animation in with JS */
 .showcase-highlight-block:hover p,
 .showcase-highlight-block:hover .project-tags {
     transition-property: opacity, transform;
@@ -984,31 +1034,200 @@ strong, .skill-highlight {
 .showcase-cta .btn-primary:focus .arrow-icon,
 .showcase-cta .btn-primary:focus-visible .arrow-icon { animation: arrowBattleThrust 0.35s ease-out forwards; }
 
+/* Removed unused CSS rules:
 .project-grid, .project-card, .demo-link { display: none !important; }
 .project-card::before, .project-card::after { content: none !important; display: none !important; }
+*/
 
 /* ================================== */
 /*         Contact Section            */
 /* ================================== */
-#contact { background: var(--primary-color); color: var(--light-text); text-align: center; border-radius: var(--border-radius); }
-#contact h2 { color: var(--white-color); margin-bottom: 25px; padding-top: 0; padding-bottom: 0; }
-#contact > .container > h2::before,
-#contact > .container > h2::after { display: none; }
-#contact p { margin-bottom: 35px; font-size: 1.15rem; color: var(--light-text); max-width: 650px; margin-left: auto; margin-right: auto; line-height: 1.8; }
-#contact ul { list-style: none; padding: 0; display: flex; justify-content: center; gap: 30px; flex-wrap: wrap; }
-#contact li { margin-bottom: 0; font-size: 1.1rem; }
-#contact a {
-    color: var(--white-color); font-weight: 500; overflow-wrap: break-word; word-wrap: break-word; word-break: break-all;
-    padding: 5px 10px; border-radius: 4px;
-    transition: background-color var(--transition-speed-fast) ease, color var(--transition-speed-fast) ease, border-color var(--transition-speed-fast) ease, box-shadow var(--transition-speed-fast) ease;
-    display: inline-flex; align-items: center; gap: 8px; border: 1px solid transparent; outline: none;
+#contact {
+    background: var(--primary-color);
+    color: var(--light-text);
+    text-align: center;
+    border-radius: var(--border-radius);
+    padding-top: 80px;
+    padding-bottom: 80px;
 }
-#contact a:hover, #contact a:focus, #contact a:focus-visible {
-    background-color: rgba(255, 255, 255, 0.15); border-color: var(--secondary-color); color: var(--white-color); text-decoration: none;
-    box-shadow: 0 0 0 3px rgba(var(--secondary-color-rgb-tuple), 0.3);
+
+#contact .contact-heading {
+    color: var(--white-color);
+    margin-bottom: 30px;
+    font-size: 2rem;
+    padding-top: 0;
+    padding-bottom: 0;
 }
-#contact li a[href^="mailto:"]::before { content: '📧'; display: inline-block; }
-#contact li a[href*="github.com"]::before { content: '💻'; display: inline-block; }
+#contact .contact-heading::before,
+#contact .contact-heading::after {
+    display: none;
+}
+
+#contact .contact-intro,
+#contact .contact-outro {
+    margin-bottom: 25px;
+    font-size: 1.1rem;
+    color: var(--light-text);
+    max-width: 700px;
+    margin-left: auto;
+    margin-right: auto;
+    line-height: 1.75;
+}
+#contact .contact-intro {
+    margin-bottom: 45px;
+}
+#contact .contact-outro {
+    margin-top: 45px;
+    font-size: 1rem;
+    opacity: 0.9;
+}
+
+.contact-methods {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+    gap: 25px;
+    max-width: 800px;
+    margin: 0 auto;
+}
+
+.contact-method-item {
+    background-color: hsla(var(--white-color-rgb-tuple), 0.06);
+    border: 1px solid hsla(var(--white-color-rgb-tuple), 0.12);
+    border-radius: var(--border-radius);
+    padding: 20px 25px;
+    color: var(--white-color);
+    text-decoration: none;
+    display: flex;
+    align-items: center;
+    text-align: left;
+    transition: transform var(--transition-speed-fast) ease,
+                background-color var(--transition-speed-fast) ease,
+                border-color var(--transition-speed-fast) ease,
+                box-shadow var(--transition-speed) ease;
+    outline: none;
+}
+
+.contact-method-item:hover,
+.contact-method-item:focus-visible {
+    transform: translateY(-6px) scale(1.02);
+    background-color: hsla(var(--white-color-rgb-tuple), 0.1);
+    border-color: var(--secondary-color);
+    box-shadow: 0 6px 18px rgba(var(--primary-color-rgb-tuple), 0.25);
+}
+.contact-method-item:focus-visible {
+     box-shadow: 0 6px 18px rgba(var(--primary-color-rgb-tuple), 0.25), 0 0 0 3px rgba(var(--secondary-color-rgb-tuple), 0.7);
+}
+
+.contact-icon-container {
+    margin-right: 18px;
+    flex-shrink: 0;
+    color: var(--secondary-color);
+    transition: transform var(--transition-speed-fast) ease;
+}
+.contact-icon-container svg {
+    display: block;
+    width: 28px;
+    height: 28px;
+}
+.contact-method-item:hover .contact-icon-container,
+.contact-method-item:focus-visible .contact-icon-container {
+    transform: scale(1.15);
+}
+
+.contact-main-text {
+    flex-grow: 1;
+    font-weight: 500;
+    font-size: 1rem;
+    line-height: 1.5;
+    color: var(--white-color);
+    transition: color var(--transition-speed-fast) ease;
+}
+.contact-method-item.email-link .contact-main-text {
+    word-break: break-all;
+}
+.contact-method-item:hover .contact-main-text,
+.contact-method-item:focus-visible .contact-main-text {
+    color: var(--white-color);
+}
+
+.contact-action-indicator {
+    margin-left: 12px;
+    font-size: 1.4rem;
+    color: var(--secondary-color);
+    opacity: 0.6;
+    transform: translateX(0px);
+    transition: opacity var(--transition-speed-fast) ease, transform var(--transition-speed-fast) ease;
+}
+
+.contact-method-item:hover .contact-action-indicator,
+.contact-method-item:focus-visible .contact-action-indicator {
+    opacity: 1;
+    transform: translateX(5px);
+}
+
+/* Responsive adjustments for Contact Section cards */
+@media (max-width: 767.98px) {
+    #contact {
+        padding-top: 60px;
+        padding-bottom: 60px;
+    }
+    .contact-methods {
+        gap: 20px;
+        grid-template-columns: 1fr;
+        max-width: 450px;
+    }
+    #contact .contact-heading {
+        font-size: 1.8rem;
+        margin-bottom: 25px;
+    }
+    #contact .contact-intro {
+        font-size: 1.05rem;
+        margin-bottom: 35px;
+    }
+     #contact .contact-outro {
+        margin-top: 35px;
+    }
+    .contact-method-item {
+        padding: 18px 20px;
+    }
+    .contact-main-text {
+        font-size: 0.95rem;
+    }
+}
+
+@media (max-width: 575.98px) {
+    #contact {
+        padding-top: 50px;
+        padding-bottom: 50px;
+    }
+    #contact .contact-heading {
+        font-size: 1.6rem;
+    }
+    #contact .contact-intro {
+        font-size: 1rem;
+        line-height: 1.65;
+    }
+    .contact-methods {
+        gap: 15px;
+    }
+    .contact-method-item {
+        padding: 15px;
+    }
+    .contact-icon-container {
+        margin-right: 12px;
+    }
+    .contact-icon-container svg {
+        width: 24px;
+        height: 24px;
+    }
+    .contact-main-text {
+        font-size: 0.9rem;
+    }
+    .contact-action-indicator {
+        font-size: 1.2rem;
+    }
+}
+
 
 /* ================================== */
 /*             Footer                 */
@@ -1070,8 +1289,8 @@ footer {
     main section[id]:nth-child(even) {
         transform: translateX(-60px) scale(0.93) rotateY(12deg);
     }
-    h2 { font-size: 2rem; padding-top: 35px; }
-    section[id] > .container > h2::before { width: 22px; height: 22px; margin-bottom: 14px; }
+    h2:not(.contact-heading) { font-size: 2rem; padding-top: 35px; }
+    section[id] > .container > h2:not(.contact-heading)::before { width: 22px; height: 22px; margin-bottom: 14px; }
     .about-layout { gap: 40px; }
     .profile-pic { width: 200px; height: 200px; }
     .project-list > .project-item, .project-list > .project-item:nth-child(even) { flex-direction: column; align-items: stretch; gap: 20px; }
@@ -1122,11 +1341,11 @@ footer {
     body.nav-open header.scrolled .nav-primary { padding-top: calc(var(--header-height-scrolled) + 20px); }
 
     h1 { font-size: 2.1rem; }
-    h2 { font-size: 1.9rem; margin-bottom: 2em; padding-bottom: 20px; padding-top: 30px; }
-    section[id] > .container > h2::before { width: 20px; height: 20px; margin-bottom: 12px; }
-    section[id] > .container > h2::after { width: 60px; height: 2.5px; }
+    h2:not(.contact-heading) { font-size: 1.9rem; margin-bottom: 2em; padding-bottom: 20px; padding-top: 30px; }
+    section[id] > .container > h2:not(.contact-heading)::before { width: 20px; height: 20px; margin-bottom: 12px; }
+    section[id] > .container > h2:not(.contact-heading)::after { width: 60px; height: 2.5px; }
     .project-category h3 { font-size: 1.5rem; }
-    h3 { font-size: 1.4rem; }
+    h3 { font-size: 1.4rem; } /* General h3 */
     section { padding: 60px 0; margin-bottom: 50px; }
     main section[id] {
         transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000),
@@ -1148,7 +1367,6 @@ footer {
     .key-skills { margin-left: auto; margin-right: auto; max-width: 90%; padding: 15px; }
     .key-skills h4 { font-size: 1.05rem; }
     .key-skills li { font-size: 0.9rem; }
-    .project-category h3 { font-size: 1.4rem; padding-bottom: 15px; }
     .project-category h3::after { width: 70px; }
     .category-divider { margin: 40px auto 30px auto; }
     .project-item { gap: 15px; padding: 20px; }
@@ -1171,7 +1389,6 @@ footer {
     .showcase-key-features h4, .showcase-reflection h4 { font-size: 1.15rem; margin-bottom: 15px; }
     .showcase-key-features li, .showcase-reflection p { font-size: 0.9rem; }
     .showcase-key-features .feature-icon { font-size: 1.1em; }
-    #contact ul { gap: 20px; }
     .scroll-top-btn { width: 42px; height: 42px; line-height: 42px; font-size: 18px; bottom: 20px; right: 20px; }
 }
 
@@ -1180,10 +1397,10 @@ footer {
     body { line-height: 1.65; }
     .container { padding: 0 15px; }
     h1 { font-size: 1.9rem; }
-    h2 { font-size: 1.7rem; margin-bottom: 1.8em; padding-bottom: 15px; padding-top: 25px; }
-    section[id] > .container > h2::before { width: 18px; height: 18px; margin-bottom: 10px; }
-    section[id] > .container > h2::after { width: 50px; height: 2px; }
-    h3 { font-size: 1.3rem; }
+    h2:not(.contact-heading) { font-size: 1.7rem; margin-bottom: 1.8em; padding-bottom: 15px; padding-top: 25px; }
+    section[id] > .container > h2:not(.contact-heading)::before { width: 18px; height: 18px; margin-bottom: 10px; }
+    section[id] > .container > h2:not(.contact-heading)::after { width: 50px; height: 2px; }
+    h3 { font-size: 1.3rem; } /* General h3 */
     .project-category h3 { font-size: 1.3rem; }
     header .nav-primary a { padding: 10px 12px; font-size: 1rem; }
     section { padding: 50px 0; margin-bottom: 40px; }
@@ -1208,7 +1425,6 @@ footer {
     .key-skills { padding: 15px 15px 15px 20px; }
     .key-skills li { font-size: 0.9rem; gap: 8px; }
     .about-image::after { height: 3px; bottom: -8px; }
-    .project-category h3 { font-size: 1.2rem; padding-bottom: 12px; }
     .project-category h3::after { width: 60px; }
     .category-divider { margin: 30px auto 20px auto; }
     .project-item { padding: 15px; }
@@ -1231,9 +1447,6 @@ footer {
     .showcase-highlight-block:hover::after { opacity: 0.32; transform: translate(var(--parallax-after-x), var(--parallax-after-y)) scale(1.15) rotate(8deg) translateX(-4px) translateY(-2px); }
     .showcase-key-features h4, .showcase-reflection h4 { font-size: 1.1rem; }
     .showcase-key-features li, .showcase-reflection p { font-size: 0.85rem; }
-    #contact p, #contact li { font-size: 1rem; }
-    #contact ul { gap: 15px; }
-    #contact a { padding: 4px 8px; gap: 6px; }
     footer { padding: 30px 15px; font-size: 0.85rem; }
     .footer-content { gap: 12px; }
     .copyright, .footer-tech { text-align: center; width: 100%; }
