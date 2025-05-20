@@ -117,6 +117,13 @@
     /* --- Final Showcase Parallax Variables (Set by JS for ::after, content handled directly by JS) --- */
     --parallax-after-x: 0px;
     --parallax-after-y: 0px;
+
+    /* NEW: Variables for H3 sub-category heading animation */
+    --h3-icon-color: var(--secondary-color); /* Hex: #2980b9 */
+    --h3-underline-color: var(--secondary-color);
+    --h3-hover-icon-color: var(--accent-color); /* Hex: #d9534f */
+    --h3-hover-underline-color: var(--accent-color);
+    --h3-icon-size: 18px; /* Slightly smaller than H2 icon */
 }
 
 /* --- Utility Classes --- */
@@ -244,21 +251,19 @@ h2 {
 }
 section[id] > .container > h2:not(.contact-heading)::before {
     content: ''; display: block; width: 24px; height: 24px;
-    /* Updated SVG Icon */
     background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232980b9'%3E%3Cpath d='M12 5.83l2.46 2.46c.39.39 1.02.39 1.41 0 .39-.39.39-1.02 0-1.41L12.7 3.7a.9959.9959 0 00-1.41 0L8.12 6.88c-.39.39-.39 1.02 0 1.41.39.39 1.02.39 1.41 0L12 5.83zm0 12.34l-2.46-2.46a.9959.9959 0 00-1.41 0c-.39.39-.39 1.02 0 1.41l3.17 3.17c.39.39 1.02.39 1.41 0l3.17-3.17c.39-.39.39-1.02 0-1.41a.9959.9959 0 00-1.41 0L12 18.17z'/%3E%3C/svg%3E");
     background-repeat: no-repeat; background-position: center; background-size: contain;
     margin: 0 auto 15px auto;
-    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55); /* Updated transition */
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
 section[id] > .container > h2:not(.contact-heading):hover::before {
-    transform: translateY(-2px) scale(1.2) rotate(10deg); /* Updated hover transform */
+    transform: translateY(-2px) scale(1.2) rotate(10deg);
 }
 section[id] > .container > h2:not(.contact-heading)::after {
     content: ''; display: block; width: 70px; height: 3px; background-color: var(--accent-color);
     border-radius: 2px; position: absolute; bottom: 0; left: 50%;
     transform: translateX(-50%) scaleX(1);
     transform-origin: center;
-    /* Updated transition */
     transition: width var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55),
                 background-color var(--transition-speed) ease-out,
                 transform var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
@@ -266,7 +271,7 @@ section[id] > .container > h2:not(.contact-heading)::after {
 section[id] > .container > h2:not(.contact-heading):hover::after {
     width: 100px;
     background-color: var(--secondary-color);
-    transform: translateX(-50%) scaleX(1.2); /* Updated hover transform */
+    transform: translateX(-50%) scaleX(1.2);
 }
 
 #about > .container > .about-content > h2 { padding-top: 0; }
@@ -286,7 +291,7 @@ section[id] > .container > h2:not(.contact-heading):hover::after {
 }
 /* END: Icon for Section Headings */
 
-h3 { font-size: 1.5rem; margin-bottom: 1.5em; }
+h3 { font-size: 1.5rem; margin-bottom: 1.5em; } /* Base H3, project category H3 will override */
 h4 { font-size: 1.15rem; margin-bottom: 0.6em; }
 
 /* ================================== */
@@ -602,49 +607,115 @@ strong, .skill-highlight {
 #projects { padding-top: 80px; padding-bottom: 60px; }
 .project-category { margin-bottom: 30px; }
 
-/* === Base styling for project category H3 === */
+
+/* === Styling for project category H3 (e.g., "Midterm to Finals Activities") === */
 .project-category h3 {
     text-align: center;
-    margin-bottom: 40px;
+    margin-bottom: 50px; /* Adjusted to make space for icon */
     color: var(--primary-color);
     position: relative;
-    padding-bottom: 20px;
+    padding-bottom: 15px; /* Adjusted for underline */
+    padding-top: 10px; /* Added padding for icon */
     font-size: 1.6rem;
     font-weight: 600;
     letter-spacing: 0.5px;
-    /* min-height: 1.5em; */ /* Optional: if JS placeholder causes issues, but likely not needed */
+    cursor: default;
+    transition: color var(--transition-speed-fast) ease;
+    min-height: 2.5em; /* To prevent layout shift if text is dynamic */
 }
+
+/* Icon for H3 sub-category headings */
+.project-category h3::before {
+    content: '';
+    display: block;
+    width: var(--h3-icon-size);
+    height: var(--h3-icon-size);
+    /* Chevron Right - Default Color (var(--h3-icon-color) -> #2980b9) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%232980b9'%3E%3Cpath d='M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z'/%3E%3C/svg%3E");
+    background-color: transparent;
+    background-repeat: no-repeat;
+    background-position: center;
+    background-size: contain;
+    margin: 0 auto 8px auto;
+    opacity: 0; /* Start hidden, will be revealed by JS or :hover */
+    transform: scale(0.8) translateY(-5px) rotate(-15deg);
+    transition: transform 0.4s cubic-bezier(0.68, -0.55, 0.265, 1.55),
+                opacity 0.3s ease-out 0.1s, /* Delay opacity transition slightly */
+                background-image 0.3s ease-out;
+}
+
+/* Underline for H3 sub-category headings */
 .project-category h3::after {
     content: '';
     position: absolute;
-    width: 80px;
+    width: 0px; /* Start with no width, will be animated by JS or :hover */
     height: 2px;
     bottom: 0;
     left: 50%;
-    transform: translateX(-50%);
-    background-color: var(--secondary-color);
+    transform: translateX(-50%) scaleX(1);
+    transform-origin: center;
+    background-color: var(--h3-underline-color);
+    transition: width var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55) 0.1s, /* Delay width transition */
+                background-color var(--transition-speed) ease-out,
+                transform var(--transition-speed) cubic-bezier(0.68, -0.55, 0.265, 1.55);
 }
+
+/* Reveal icon and underline when .is-animating-letters or .heading-elements-visible is present */
+.project-category h3.is-animating-letters::before,
+.project-category h3.heading-elements-visible::before {
+    opacity: 0.7;
+    transform: scale(1) translateY(0px) rotate(0deg);
+}
+.project-category h3.is-animating-letters::after,
+.project-category h3.heading-elements-visible::after {
+    width: 50px; /* Initial visible width */
+}
+
+/* Hover effects for H3 */
+.project-category h3:hover {
+    color: var(--h3-hover-icon-color);
+}
+
+.project-category h3:hover::before {
+    opacity: 1;
+    transform: scale(1.1) translateY(0px) rotate(5deg);
+    /* Chevron Right - Accent Color (var(--h3-hover-icon-color) -> #d9534f) */
+    background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='%23d9534f'%3E%3Cpath d='M8.59 16.59L13.17 12 8.59 7.41 10 6l6 6-6 6-1.41-1.41z'/%3E%3C/svg%3E");
+}
+
+.project-category h3:hover::after {
+    width: 70px;
+    background-color: var(--h3-hover-underline-color);
+    transform: translateX(-50%) scaleX(1.1);
+}
+
 
 /* --- Staggered Letter Animation for H3 Category Headings (JS Controlled) --- */
 .project-category > h3 .char-animated-subheader {
     display: inline-block;
     opacity: 0;
-    transform: translateY(15px) scale(0.8) rotateX(-45deg);
+    transform: translateY(20px) scale(0.6) rotateX(-70deg);
     transform-origin: bottom center;
     will-change: transform, opacity;
 }
-.project-category > h3.is-animating-letters .char-animated-subheader {
-    animation: revealSubheaderCharKeyframe 0.7s cubic-bezier(0.215, 0.610, 0.355, 1.000) forwards;
-}
+
 @keyframes revealSubheaderCharKeyframe {
     0% {
         opacity: 0;
-        transform: translateY(15px) scale(0.8) rotateX(-45deg);
+        transform: translateY(20px) scale(0.6) rotateX(-70deg);
+    }
+    70% {
+        opacity: 1;
+        transform: translateY(-4px) scale(1.08) rotateX(10deg);
     }
     100% {
         opacity: 1;
         transform: translateY(0) scale(1) rotateX(0deg);
     }
+}
+
+.project-category > h3.is-animating-letters .char-animated-subheader {
+    animation: revealSubheaderCharKeyframe 0.4s cubic-bezier(0.34, 1.56, 0.64, 1) forwards;
 }
 /* --- End of Staggered Letter Animation for H3 --- */
 
@@ -654,12 +725,11 @@ strong, .skill-highlight {
 
 .project-item {
     display: flex; gap: 30px; padding: 25px; border-radius: var(--border-radius);
-    background-color: var(--content-container-bg); border: 1px solid var(--border-color); /* Start with 1px border */
+    background-color: var(--content-container-bg); border: 1px solid var(--border-color);
     box-shadow: var(--card-shadow); opacity: 0;
     transition: background-color var(--transition-speed) ease,
                 background-image var(--transition-speed) ease,
                 border-color var(--transition-speed-fast) ease,
-                /* border-width var(--transition-speed-fast) ease, */ /* Removed border-width from transition */
                 opacity 0.5s cubic-bezier(0.215, 0.610, 0.355, 1.000) var(--card-delay, 0.3s),
                 transform 0.25s cubic-bezier(0.23, 1, 0.32, 1),
                 box-shadow var(--transition-speed) ease;
@@ -677,8 +747,7 @@ strong, .skill-highlight {
 .project-item:hover {
     transform: scale(var(--project-item-hover-scale)) translateY(-5px);
     border-color: var(--item-dominant-hover-color, var(--secondary-color));
-    /* border-width: 2px; */ /* Removed: using box-shadow for thicker border effect */
-    box-shadow: var(--card-hover-shadow), 0 0 0 1px var(--item-dominant-hover-color, var(--secondary-color)); /* Added for border effect */
+    box-shadow: var(--card-hover-shadow), 0 0 0 1px var(--item-dominant-hover-color, var(--secondary-color));
 }
 
 .project-item .project-image-container {
@@ -1034,11 +1103,6 @@ strong, .skill-highlight {
 .showcase-cta .btn-primary:focus .arrow-icon,
 .showcase-cta .btn-primary:focus-visible .arrow-icon { animation: arrowBattleThrust 0.35s ease-out forwards; }
 
-/* Removed unused CSS rules:
-.project-grid, .project-card, .demo-link { display: none !important; }
-.project-card::before, .project-card::after { content: none !important; display: none !important; }
-*/
-
 /* ================================== */
 /*         Contact Section            */
 /* ================================== */
@@ -1344,8 +1408,10 @@ footer {
     h2:not(.contact-heading) { font-size: 1.9rem; margin-bottom: 2em; padding-bottom: 20px; padding-top: 30px; }
     section[id] > .container > h2:not(.contact-heading)::before { width: 20px; height: 20px; margin-bottom: 12px; }
     section[id] > .container > h2:not(.contact-heading)::after { width: 60px; height: 2.5px; }
-    .project-category h3 { font-size: 1.5rem; }
+
+    .project-category h3 { font-size: 1.5rem; margin-bottom: 40px; } /* Adjusted H3 responsive */
     h3 { font-size: 1.4rem; } /* General h3 */
+
     section { padding: 60px 0; margin-bottom: 50px; }
     main section[id] {
         transition: opacity 0.6s cubic-bezier(0.215, 0.610, 0.355, 1.000),
@@ -1367,7 +1433,7 @@ footer {
     .key-skills { margin-left: auto; margin-right: auto; max-width: 90%; padding: 15px; }
     .key-skills h4 { font-size: 1.05rem; }
     .key-skills li { font-size: 0.9rem; }
-    .project-category h3::after { width: 70px; }
+    /* .project-category h3::after { width: 70px; } */ /* Handled by new H3 styles */
     .category-divider { margin: 40px auto 30px auto; }
     .project-item { gap: 15px; padding: 20px; }
     .project-item .project-image-container { min-height: 200px; margin-bottom: 15px; }
@@ -1400,8 +1466,10 @@ footer {
     h2:not(.contact-heading) { font-size: 1.7rem; margin-bottom: 1.8em; padding-bottom: 15px; padding-top: 25px; }
     section[id] > .container > h2:not(.contact-heading)::before { width: 18px; height: 18px; margin-bottom: 10px; }
     section[id] > .container > h2:not(.contact-heading)::after { width: 50px; height: 2px; }
+
+    .project-category h3 { font-size: 1.3rem; margin-bottom: 35px; } /* Adjusted H3 responsive */
     h3 { font-size: 1.3rem; } /* General h3 */
-    .project-category h3 { font-size: 1.3rem; }
+
     header .nav-primary a { padding: 10px 12px; font-size: 1rem; }
     section { padding: 50px 0; margin-bottom: 40px; }
     main section[id] {
@@ -1425,7 +1493,7 @@ footer {
     .key-skills { padding: 15px 15px 15px 20px; }
     .key-skills li { font-size: 0.9rem; gap: 8px; }
     .about-image::after { height: 3px; bottom: -8px; }
-    .project-category h3::after { width: 60px; }
+    /* .project-category h3::after { width: 60px; } */ /* Handled by new H3 styles */
     .category-divider { margin: 30px auto 20px auto; }
     .project-item { padding: 15px; }
     .project-item .project-image-container { min-height: 180px; padding: 10px 10px 30px 10px; }

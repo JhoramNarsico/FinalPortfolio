@@ -18,7 +18,7 @@ document.addEventListener('DOMContentLoaded', () => {
     const navToggle = document.querySelector('.nav-toggle');
     const primaryNav = document.querySelector('.nav-primary');
 
-    // --- NEW: Cache the Midterm/Finals H3 element ---
+    // --- Cache the Midterm/Finals H3 element ---
     const midtermFinalsCategoryHeading = document.querySelector('.project-category[data-category-id="midterm-finals"] > h3');
 
 
@@ -470,52 +470,68 @@ document.addEventListener('DOMContentLoaded', () => {
         console.log("Hero title letter animation initialized.");
     }
 
-    // --- NEW: Staggered Letter Animation for Midterm/Finals Category H3 Heading ---
+    // --- Staggered Letter Animation and Icon/Underline Reveal for Midterm/Finals Category H3 Heading ---
     if (midtermFinalsCategoryHeading && 'IntersectionObserver' in window) {
         const originalHeadingText = midtermFinalsCategoryHeading.textContent.trim();
         midtermFinalsCategoryHeading.dataset.originalText = originalHeadingText;
-        midtermFinalsCategoryHeading.innerHTML = ' '; // Non-breaking space
-        midtermFinalsCategoryHeading.classList.add('heading-reveal-letters-pending');
+
+        // Keep original text for layout calculation by CSS, but hide it visually
+        // The ::before and ::after will be positioned relative to this block.
+        // Spans for letter animation will replace this later.
+        const textNode = document.createTextNode(originalHeadingText);
+        const hiddenTextSpan = document.createElement('span');
+        hiddenTextSpan.style.opacity = '0';
+        hiddenTextSpan.style.pointerEvents = 'none';
+        hiddenTextSpan.appendChild(textNode);
+        midtermFinalsCategoryHeading.innerHTML = ''; // Clear first
+        midtermFinalsCategoryHeading.appendChild(hiddenTextSpan); // Add hidden text for layout
+
+        midtermFinalsCategoryHeading.classList.add('heading-reveal-pending'); // General pending state
 
         const headingObserver = new IntersectionObserver((entries, observer) => {
             entries.forEach(entry => {
                 if (entry.isIntersecting) {
                     const headingEl = entry.target;
-                    if (headingEl.classList.contains('heading-reveal-letters-pending')) {
-                        headingEl.innerHTML = '';
+                    if (headingEl.classList.contains('heading-reveal-pending')) {
+                        // 1. Trigger CSS for icon/underline reveal
+                        headingEl.classList.add('heading-elements-visible');
+
+                        // 2. Prepare and trigger letter animation
+                        headingEl.innerHTML = ''; // Clear the hidden text
                         const textToAnimate = headingEl.dataset.originalText;
 
                         textToAnimate.split('').forEach((char, index) => {
                             const span = document.createElement('span');
                             span.className = 'char-animated-subheader';
                             span.textContent = char === ' ' ? '\u00A0' : char;
-                            span.style.animationDelay = `${index * 0.04}s`;
+                            span.style.animationDelay = `${index * 0.025}s`;
                             headingEl.appendChild(span);
                         });
                         headingEl.classList.add('is-animating-letters');
-                        headingEl.classList.remove('heading-reveal-letters-pending');
+                        headingEl.classList.remove('heading-reveal-pending');
                         observer.unobserve(headingEl);
-                        console.log(`Animating H3: ${textToAnimate}`);
+                        console.log(`Animating H3 and revealing elements for: ${textToAnimate}`);
                     }
                 }
             });
-        }, { threshold: 0.25, rootMargin: "0px 0px -50px 0px" });
+        }, { threshold: 0.3, rootMargin: "0px 0px -60px 0px" }); // Adjust threshold/margin as needed
 
         headingObserver.observe(midtermFinalsCategoryHeading);
-        console.log("Midterm/Finals H3 heading letter animation observer initialized.");
+        console.log("Midterm/Finals H3 heading animation observer initialized.");
 
-    } else if (midtermFinalsCategoryHeading) {
+    } else if (midtermFinalsCategoryHeading) { // Fallback if IntersectionObserver is not supported
+        midtermFinalsCategoryHeading.classList.add('heading-elements-visible'); // Show icon/underline directly
         const originalHeadingText = midtermFinalsCategoryHeading.textContent.trim();
         midtermFinalsCategoryHeading.innerHTML = '';
         originalHeadingText.split('').forEach((char, index) => {
             const span = document.createElement('span');
             span.className = 'char-animated-subheader';
             span.textContent = char === ' ' ? '\u00A0' : char;
-            span.style.animationDelay = `${index * 0.04}s`;
+            span.style.animationDelay = `${index * 0.025}s`;
             midtermFinalsCategoryHeading.appendChild(span);
         });
         midtermFinalsCategoryHeading.classList.add('is-animating-letters');
-        console.log("Midterm/Finals H3 heading letter animation (fallback) initialized.");
+        console.log("Midterm/Finals H3 heading animation (fallback) initialized.");
     }
     // --- End of Staggered Letter Animation for Midterm/Finals H3 ---
 
@@ -566,7 +582,6 @@ document.addEventListener('DOMContentLoaded', () => {
             highlightBlockForParallax.style.setProperty('--parallax-after-x', `${afterTranslateX}px`);
             highlightBlockForParallax.style.setProperty('--parallax-after-y', `${afterTranslateY}px`);
 
-            // Direct transform manipulation for content elements
             if (h4El) h4El.style.transform = `translate(${contentTranslateX}px, ${contentTranslateY}px)`;
             if (pEl) pEl.style.transform = `translate(${contentTranslateX}px, ${contentTranslateY}px)`;
             if (tagsEl) tagsEl.style.transform = `translate(${contentTranslateX}px, ${contentTranslateY}px)`;
