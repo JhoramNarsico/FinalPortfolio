@@ -1,0 +1,30 @@
+<svg width="32" height="32" viewBox="0 0 32 32" xmlns="http://www.w3.org/2000/svg">
+  <defs>
+    <linearGradient id="bladeGradientSwordCursor" x1="0%" y1="0%" x2="100%" y2="0%">
+      <stop offset="0%" style="stop-color:#F0F0F0;stop-opacity:1" /> <!-- Lighter silver -->
+      <stop offset="50%" style="stop-color:#C0C0C0;stop-opacity:1" /> <!-- Silver -->
+      <stop offset="100%" style="stop-color:#F0F0F0;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+  
+  <!-- Blade -->
+  <path d="M16,2 
+           L17.5,19 
+           L14.5,19 Z" 
+        fill="url(#bladeGradientSwordCursor)" stroke="#78828C" stroke-width="0.75"/>
+  
+  <!-- Guard -->
+  <path d="M11,18 
+           L21,18 
+           L19.5,20 
+           L12.5,20 Z" 
+        fill="#A1887F" stroke="#5D4037" stroke-width="0.75"/>
+  
+  <!-- Hilt -->
+  <rect x="14" y="19.5" width="4" height="7" rx="0.5" 
+        fill="#BCAAA4" stroke="#6D4C41" stroke-width="0.75"/>
+  
+  <!-- Pommel -->
+  <circle cx="16" cy="27" r="1.8" 
+          fill="#A1887F" stroke="#5D4037" stroke-width="0.75"/>
+</svg>

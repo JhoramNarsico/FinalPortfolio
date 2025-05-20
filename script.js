@@ -441,17 +441,75 @@ document.addEventListener('DOMContentLoaded', () => {
 
     // --- Enhanced Skill Item Interaction ---
     skillListItems.forEach(item => {
-        const icon = item.querySelector('.skill-icon');
+        // const icon = item.querySelector('.skill-icon'); // Not strictly needed if CSS targets via parent
         item.addEventListener('mouseenter', () => {
-            if (icon) icon.classList.add('skill-icon--active');
             item.classList.add('skill-item--active');
         });
         item.addEventListener('mouseleave', () => {
-            if (icon) icon.classList.remove('skill-icon--active');
             item.classList.remove('skill-item--active');
         });
     });
     console.log("Skill item interaction initialized.");
+
+
+    // --- Personalized Touches for Final Project Showcase ---
+
+    // 1. Thematic Cursor for .final-project-showcase
+    const finalShowcaseAreaForCursor = document.querySelector('.final-project-showcase');
+    if (finalShowcaseAreaForCursor) {
+        finalShowcaseAreaForCursor.addEventListener('mouseenter', () => {
+            finalShowcaseAreaForCursor.classList.add('showcase-custom-cursor');
+        });
+        finalShowcaseAreaForCursor.addEventListener('mouseleave', () => {
+            finalShowcaseAreaForCursor.classList.remove('showcase-custom-cursor');
+        });
+        console.log("Final showcase custom cursor initialized (hover section).");
+    }
+
+    // 2. Parallax on Hover for .showcase-highlight-block
+    const highlightBlockForParallax = document.querySelector('.showcase-highlight-block');
+    if (highlightBlockForParallax) {
+        const parallaxIntensityAfter = 0.03;    // How much the ::after (emoji) moves
+        const parallaxIntensityContent = 0.015; // How much the text content moves
+
+        const h4El = highlightBlockForParallax.querySelector('h4');
+        const pEl = highlightBlockForParallax.querySelector('p');
+        const tagsEl = highlightBlockForParallax.querySelector('.project-tags');
+
+        highlightBlockForParallax.addEventListener('mousemove', (e) => {
+            const rect = highlightBlockForParallax.getBoundingClientRect();
+            // Calculate mouse position relative to the center of the block
+            const x = e.clientX - rect.left - rect.width / 2;
+            const y = e.clientY - rect.top - rect.height / 2;
+
+            // Calculate translation values
+            const afterTranslateX = x * parallaxIntensityAfter;
+            const afterTranslateY = y * parallaxIntensityAfter;
+            const contentTranslateX = -x * parallaxIntensityContent; // Opposite direction for content
+            const contentTranslateY = -y * parallaxIntensityContent;
+
+            // Apply to ::after element via CSS variables
+            highlightBlockForParallax.style.setProperty('--parallax-after-x', `${afterTranslateX}px`);
+            highlightBlockForParallax.style.setProperty('--parallax-after-y', `${afterTranslateY}px`);
+
+            // Apply to content elements directly
+            if (h4El) h4El.style.transform = `translate(${contentTranslateX}px, ${contentTranslateY}px)`;
+            if (pEl) pEl.style.transform = `translate(${contentTranslateX}px, ${contentTranslateY}px)`;
+            if (tagsEl) tagsEl.style.transform = `translate(${contentTranslateX}px, ${contentTranslateY}px)`;
+        });
+
+        highlightBlockForParallax.addEventListener('mouseleave', () => {
+            // Reset ::after element transforms
+            highlightBlockForParallax.style.setProperty('--parallax-after-x', `0px`);
+            highlightBlockForParallax.style.setProperty('--parallax-after-y', `0px`);
+
+            // Reset content element transforms
+            if (h4El) h4El.style.transform = `translate(0px, 0px)`;
+            if (pEl) pEl.style.transform = `translate(0px, 0px)`;
+            if (tagsEl) tagsEl.style.transform = `translate(0px, 0px)`;
+        });
+        console.log("Final showcase highlight block parallax initialized.");
+    }
 
     console.log("JavaScript enhancements initialized.");
 });
